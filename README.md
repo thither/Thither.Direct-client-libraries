@@ -1,2 +1,3 @@
-# Thither.Direct-api-fms
-THITHER.DIRECT - API - FLOW METRICS STATISTICS
+# Thither.Direct - API - FLOW METRICS STATISTICS 
+
+### Variations for posting metrics data
