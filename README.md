@@ -65,6 +65,15 @@ A url with the urlecoded parameters can be used to put metric data to your flow 
          'csv':  csv_data                # CSV format the same as posting a csv file
       }
 
+ #### POST -  json encoded parameters and a list of items
+  
+  JSON data for a Request:
+  
+      {
+         'fid':   'YourFlowID',            # Your Flow Metrics Statistics ID
+         'ps':    'YourPassPhrase',        # Your API Pass-Phrase
+         'items':  list_of_metric_data     # list of items [[MetricID, DateTime, Value],]
+      }
   
 
   
