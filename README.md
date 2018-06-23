@@ -81,6 +81,7 @@ A url with the urlecoded parameters can be used to put metric data to your flow 
 
 ### API RESPONSES
 API responds with a HTTP status-code and with application/json status data
+
 Bad API syntrax:
 
     status-code: 400
@@ -116,13 +117,15 @@ Failed request:
     status-code: 200
     {'status': 'BAD', 'failed': Number_Of_Items, 'errors': [Corresponding_Errors_and_Items]}
     
-##### Corresponding_Errors_and_Items
-JSON 'errors' key with a list of 
- [e, mid, dt, v]
- e: 
-    - bad_value: Value is not -/=/+(number)
-    - bad_time_format: data and time is not in %Y-%m-%d %H:%M:%S format
-    - no_such_metric_id: the metric Id does not exists
+##### Corresponding Errors and Items
+'errors' key, a list of items with the error andf the corresponding item
+
+    [[e, mid, dt, v],]
+
+errors: 
++ bad_value: Value is not -/=/+(number)
++ bad_time_format: data and time is not in %Y-%m-%d %H:%M:%S format
++ no_such_metric_id: the metric Id does not exists
 
 
   
