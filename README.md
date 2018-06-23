@@ -4,13 +4,15 @@ On this branch API Guide to Flow Metrics Statistics and exmaples of usage
 An API is available, in order to add metrics data from extrenal application to your FlowID on Thither.Direct
 
 ## API's CLIENT SETTINGS
+
+### API REUESTS
 API's root-url https://thither.direct/api/fms/post/
 
 Options for requests to the API's root-url are seperated by SINGLE ITEM or MULTIPLE ITEMS.
 
-### options for SINGLE ITEM 
+#### options for SINGLE ITEM 
 
-#### GET or POST - parameters urlencoded 
+##### GET or POST - parameters urlencoded 
   
   Parameters for a Request:
 
@@ -24,7 +26,7 @@ A url with the urlecoded parameters can be used to put metric data to your flow 
 
     https://thither.direct/api/fms/post/?fid=YourFlowID&ps=YourPassPhrase&mid=YourMetricID&dt=%Y-%m-%d%20%H:%M:%S:11&v=MetricValue
 
-#### POST - parameters json encoded
+##### POST - parameters json encoded
   
   JSON data for a Request:
   
@@ -37,9 +39,9 @@ A url with the urlecoded parameters can be used to put metric data to your flow 
       }
     
     
-### options for MULTIPLE ITEMS
+#### options for MULTIPLE ITEMS
 
-#### POST - parameters and a csv file
+##### POST - parameters and a csv file
 
   Parameters for a Request:
 
@@ -55,17 +57,17 @@ A url with the urlecoded parameters can be used to put metric data to your flow 
      2,2018-06-12 14:04:11,122
      2,2018-06-12 14:14:11,123
 
- #### POST -  json encoded parameters and a csv data 
+##### POST -  json encoded parameters and a csv data 
   
   JSON data for a Request:
   
       {
          'fid': 'YourFlowID',            # Your Flow Metrics Statistics ID
          'ps':  'YourPassPhrase',        # Your API Pass-Phrase
-         'csv':  csv_data                # CSV format the same as posting a csv file
+         'csv':  csv_data                # CSV format the same as with posting a csv file
       }
 
- #### POST -  json encoded parameters and a list of items
+##### POST -  json encoded parameters and a list of items
   
   JSON data for a Request:
   
@@ -74,6 +76,8 @@ A url with the urlecoded parameters can be used to put metric data to your flow 
          'ps':    'YourPassPhrase',        # Your API Pass-Phrase
          'items':  list_of_metric_data     # list of items [[MetricID, DateTime, Value],]
       }
+  
+  
   
 
   
