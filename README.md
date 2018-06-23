@@ -8,7 +8,7 @@ API's root-url https://thither.direct/api/fms/post/
 
 Options for requests to the API's root-url are seperated by SINGLE ITEM or MULTIPLE ITEMS.
 
-### SINGLE ITEM options
+### options for SINGLE ITEM 
 
 #### GET or POST - parameters urlencoded 
   
@@ -36,3 +36,26 @@ A url with the urlecoded parameters can be used to put metric data to your flow 
          'v':    Integer                 # Value(positive, negative or =equal)
       }
     
+    
+### options for MULTIPLE ITEMS
+
+#### POST - parameters urlencoded and a csv file
+
+  Parameters for a Request:
+
+    fid    # Your Flow Metrics Statistics ID
+    ps     # Your API Pass-Phrase
+
+  Request with a File, filename has to be 'csv'
+  CSV format, 1st row as header with columns mid,dt,v
+     
+     mid,dt,v
+     1,2018-06-12 13:04:11,1234
+     2,2018-06-12 13:04:11,121
+     2,2018-06-12 14:04:11,122
+     2,2018-06-12 14:14:11,123
+  
+
+  
+  
+  
