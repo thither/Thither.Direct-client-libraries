@@ -39,7 +39,7 @@ A url with the urlecoded parameters can be used to put metric data to your flow 
     
 ### options for MULTIPLE ITEMS
 
-#### POST - parameters urlencoded and a csv file
+#### POST - parameters and a csv file
 
   Parameters for a Request:
 
@@ -54,6 +54,17 @@ A url with the urlecoded parameters can be used to put metric data to your flow 
      2,2018-06-12 13:04:11,121
      2,2018-06-12 14:04:11,122
      2,2018-06-12 14:14:11,123
+
+ #### POST -  json encoded parameters and a csv data 
+  
+  JSON data for a Request:
+  
+      {
+         'fid': 'YourFlowID',            # Your Flow Metrics Statistics ID
+         'ps':  'YourPassPhrase',        # Your API Pass-Phrase
+         'csv':  csv_data                # CSV format the same as posting a csv file
+      }
+
   
 
   
