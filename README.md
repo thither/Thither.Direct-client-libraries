@@ -1,7 +1,7 @@
 # Thither.Direct - API - FLOW METRICS STATISTICS 
-On this branch API Guide to Flow Metrics Statistics and exmaples of usage 
+On this branch, API Guide to Flow Metrics Statistics and examples of usage 
 
-An API is available, in order to add metrics data from extrenal application to your FlowID on Thither.Direct
+An API is available on Thither.Direct, in order to add metrics data from extrenal application to your FlowID 
 
 ## API's CLIENT SETTINGS
 
@@ -129,6 +129,9 @@ errors:
 + bad_time_future:     future time is not allowed
 
 
+
+### API's EXAMPLES
+Python client, [client-examples-fms-api.py](client-examples-fms-api.py), based on https://github.com/requests/requests
 
 
   
