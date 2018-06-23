@@ -77,7 +77,7 @@ items = [[mid, (dt_now - datetime.timedelta(days=d, minutes=m, seconds=s)).strft
          for c in range(1000, 3000, 1000)  # 2x values once at 0sec second at 30sec
          ]
 print ('Num Items:' + str(len(items)))
-# 504000 (items) , value(5 minute time frame = 5x2x(1000+3000))
+# 2016000 (items) , value(for a 5 minute time frame = 5x2x(1000+3000))
 
 
 # CSV EXAMPLE DATA
