@@ -120,12 +120,15 @@ Failed request:
 ##### Corresponding Errors and Items
 'errors' key, a list of items with the error andf the corresponding item
 
-    [[e, mid, dt, v],]
+    [[error, mid, dt, v],]
 
 errors: 
-+ bad_value: Value is not -/=/+(number)
-+ bad_time_format: data and time is not in %Y-%m-%d %H:%M:%S format
-+ no_such_metric_id: the metric Id does not exists
++ bad_value:           Value is not -/=/+(number)
++ bad_time_format:     data and time is not in %Y-%m-%d %H:%M:%S format
++ no_such_metric_id:   the metric Id does not exists
++ bad_time_future:     future time is not allowed
+
+
 
 
   
