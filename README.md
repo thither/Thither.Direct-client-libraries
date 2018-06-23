@@ -5,7 +5,7 @@ An API is available, in order to add metrics data from extrenal application to y
 
 ## API's CLIENT SETTINGS
 
-### API REUESTS
+### API REQUESTS
 API's root-url https://thither.direct/api/fms/post/
 
 Options for requests to the API's root-url are seperated by SINGLE ITEM or MULTIPLE ITEMS.
@@ -76,9 +76,48 @@ A url with the urlecoded parameters can be used to put metric data to your flow 
          'ps':    'YourPassPhrase',        # Your API Pass-Phrase
          'items':  list_of_metric_data     # list of items [[MetricID, DateTime, Value],]
       }
-  
-  
-  
+
+
+
+### API RESPONSES
+API responds with a HTTP status-code and with application/json status data
+Bad API syntrax:
+
+    status-code: 400
+    {'status': "bad_request"}
+    
+Bad API login (flowId/passphrase/ip-address are not authorized):
+
+    status-code: 401
+    {'status': "unauthorized"}
+    
+Bad API syntrax, csv data header:
+
+    status-code: 400
+    {'status': "bad_csv_header"}
+    
+Bad API syntrax, missing a field:
+
+    status-code: 400
+    {'status': "bad_request", 'missing': The_Missing_ParameterField}
+   
+Succesfull request:
+
+    status-code: 200
+    {'status': 'OK', 'succeed': Number_Of_Items}
+        
+Partially Succesfull request:
+
+    status-code: 200
+    {'status': 'SOME_ERRORS', 'succeed': Number_Of_Items, 'failed': Number_Of_Items, 'errors': []}
+   
+Failed request:
+
+    status-code: 200
+    {'status': 'BAD', 'failed': Number_Of_Items, 'errors': []}
+    
+ 
+
 
   
   
