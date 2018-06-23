@@ -10,7 +10,7 @@ Options for requests to the API's root-url are seperated by SINGLE ITEM or MULTI
 
 ### SINGLE ITEM options
 
-#### urlencoded(GET, POST) 
+#### GET or POST - parameters urlencoded 
   
   Parameters for a Request:
 
@@ -24,7 +24,7 @@ A url with the urlecoded parameters can be used to put metric data to your flow 
 
     https://thither.direct/api/fms/post/?fid=YourFlowID&ps=YourPassPhrase&mid=YourMetricID&dt=%Y-%m-%d%20%H:%M:%S:11&v=MetricValue
 
-#### json encoded(POST) 
+#### POST - parameters json encoded
   
   JSON data for a Request:
   
