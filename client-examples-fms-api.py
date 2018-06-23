@@ -1,6 +1,6 @@
 # -- coding: utf-8 --
 
-# # #  FLOW METRICS STATISTICS - API THITHER.DIRECT # # #
+# # #  FLOW METRICS STATISTICS - API THITHER.DIRECT - PYTHON CLIENT # # #
 
 import requests
 import datetime
