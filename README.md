@@ -109,14 +109,20 @@ Succesfull request:
 Partially Succesfull request:
 
     status-code: 200
-    {'status': 'SOME_ERRORS', 'succeed': Number_Of_Items, 'failed': Number_Of_Items, 'errors': []}
+    {'status': 'SOME_ERRORS', 'succeed': Number_Of_Items, 'failed': Number_Of_Items, 'errors': [Corresponding_Errors_and_Items]}
    
 Failed request:
 
     status-code: 200
-    {'status': 'BAD', 'failed': Number_Of_Items, 'errors': []}
+    {'status': 'BAD', 'failed': Number_Of_Items, 'errors': [Corresponding_Errors_and_Items]}
     
- 
+##### Corresponding_Errors_and_Items
+JSON 'errors' key with a list of 
+ [e, mid, dt, v]
+ e: 
+    - bad_value: Value is not -/=/+(number)
+    - bad_time_format: data and time is not in %Y-%m-%d %H:%M:%S format
+    - no_such_metric_id: the metric Id does not exists
 
 
   
