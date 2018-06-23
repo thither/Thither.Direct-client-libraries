@@ -1,15 +1,18 @@
 # Thither.Direct - API - FLOW METRICS STATISTICS 
 On this branch API Guide to Flow Metrics Statistics and exmaples of usage 
 
-In order to add metric data from extrenal application to your FlowID at Thither.Direct an API is available.
-The API's root url https://thither.direct/api/fms/post/
-The options to make requests to the server are urlencoded(GET, POST), 
+An API is available, in order to add metrics data from extrenal application to your FlowID on Thither.Direct
 
-### Only Single Item options
+## API's CLIENT SETTINGS
+API's root-url https://thither.direct/api/fms/post/
+
+Options for requests to the API's root-url are seperated by SINGLE ITEM or MULTIPLE ITEMS.
+
+### SINGLE ITEM options
 
 #### urlencoded(GET, POST) 
   
-  Rquests Parameters:
+  Parameters for a Request:
 
     fid    # Your Flow Metrics Statistics ID
     ps     # Your API Pass-Phrase
@@ -23,13 +26,13 @@ A url with the urlecoded parameters can be used to put metric data to your flow 
 
 #### json encoded(POST) 
   
-  Rquests Parameters:
+  JSON data for a Request:
   
-      json={
+      {
          'fid': 'YourFlowID',            # Your Flow Metrics Statistics ID
          'ps':  'YourPassPhrase',        # Your API Pass-Phrase
          'mid': 'YourMetricID',          # Metric ID
          'dt':  '%Y-%m-%d %H:%M:%S',     # Metric's Date and Time, format 
          'v':    Integer                 # Value(positive, negative or =equal)
-         }
+      }
     
