@@ -22,6 +22,19 @@ client = FmsClient('YourFlowID',
                    keep_alive=True)
 ```
 
-            client.push_single(YourMetricId, DateAndTime, Value)
-            client.push_list([[Metric ID, DateTime, Value],])
-            client.push_csv_data("mid,dt,v\nYourMetricId,DateAndTime,Value")
+#### PUSHING SINGLE ITEM
+```python
+client.push_single(YourMetricId, DateAndTime, Value)
+```
+
+#### PUSHING MULTIPLE ITEMS - push_list
+```python
+client.push_list([[Metric ID, DateTime, Value],])
+```
+
+#### PUSHING MULTIPLE ITEMS - push_csv_data
+```python
+client.push_csv_data("mid,dt,v\nYourMetricId,DateAndTime,Value")
+```
+            
+            
