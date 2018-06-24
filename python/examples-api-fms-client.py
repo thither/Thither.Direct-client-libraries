@@ -11,8 +11,8 @@ dt_now = datetime.datetime.now()
 
 # Initiate FmsClient
 client = FmsClient('YourFlowID',
-                   # pass_phrase='YourPassPhrase',
-                   # cipher='AES',
+                   pass_phrase='YourPassPhrase',
+                   cipher='AES',
                    keep_alive=True)
 
 
@@ -44,9 +44,7 @@ items = [[mid, (dt_now - datetime.timedelta(days=d, minutes=m, seconds=s)).strft
 print ('Num Items:' + str(len(items)))  # 504000 (items) , value(5 minute time frame = 5x2x(1000+3000))
 
 # CSV EXAMPLE DATA
-csv_data = "mid,dt,v\n"
-for item in items:
-    csv_data += ','.join([str(v) for v in item])+"\n"
+csv_data = "\n".join(["mid,dt,v"]+[','.join([str(v) for v in item]) for item in items])
 print ('csv_data size: ' + str(len(csv_data)))
 print ('AUTO-GENERATED EXAMPLE ITEMS DATA - END')
 
