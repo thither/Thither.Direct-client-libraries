@@ -2,12 +2,12 @@
 
 ## INSTALL
    
-    pip install https://github.com/kashirin-alex/Thither.Direct-client-libraries/releases/download/libthither-v0.10.0/libthither-0.10.0.tar.gz
+    pip install [../releases/download/libthither-v0.10.0/libthither-0.10.0.tar.gz]
     
  or 
  
      pip install libthither
-### INSTALLATION DEPENDENCIES
+##### DEPENDENCIES
 ###### required:
      pip install requests Cryptodome zlib
 ###### optional:
