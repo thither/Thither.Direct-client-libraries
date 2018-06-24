@@ -23,7 +23,7 @@
 + Utils: 
   + (still to come)
 
-### API Client for Flow Metrics Statistics
+### API - Flow Metrics Statistics Client
 
 #### Initiating the Flow Metrics Statistics client
 ```python
