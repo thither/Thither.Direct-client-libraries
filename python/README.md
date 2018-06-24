@@ -58,7 +58,7 @@ client.push_single(YourMetricId, DateAndTime, Value)
             Parameters
             ----------
             mid : str
-                Your MetricID
+                Your Metric ID
             dt : str
                 Date and time in format '%Y-%m-%d %H:%M:%S' unless otherwise specified on the metric configurations
             v : str/int
@@ -77,7 +77,7 @@ client.push_list([[Metric ID, DateTime, Value],])
             Parameters
             ----------
             items : list
-                list of items [[Metric ID, DateTime, Value],]
+                list of items [[MetricId, DateTime, Value],]
             Returns
             -------
             requests lib response
@@ -86,7 +86,7 @@ client.push_list([[Metric ID, DateTime, Value],])
 
 #### PUSHING MULTIPLE ITEMS - push_csv_data
 ```python
-client.push_csv_data("mid,dt,v\nYourMetricId,DateAndTime,Value")
+client.push_csv_data("mid,dt,v\nMetricId,DateAndTime,Value")
 ```
             Parameters
             ----------
