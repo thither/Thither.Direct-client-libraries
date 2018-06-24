@@ -10,9 +10,9 @@ dt_now = datetime.datetime.now()
 
 
 # Initiate FmsClient
-client = FmsClient('1F',
-                   pass_phrase='1234567812345678',
-                   cipher='AES',
+client = FmsClient('YourFlowID',
+                   # pass_phrase='YourPassPhrase',
+                   # cipher='AES',
                    keep_alive=True)
 
 
