@@ -5,7 +5,7 @@
     pip install https://github.com/kashirin-alex/Thither.Direct-client-libraries/archive/libthither-v0.10.0.tar.gz
       or (as availble) 
     pip install libthither
-or to copy the content of (libthither) to your application     
+or to copy the content of [libthither](libthither) to your application     
     
 ##### DEPENDENCIES
 ###### required:
