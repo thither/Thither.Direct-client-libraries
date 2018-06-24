@@ -107,13 +107,14 @@ client.push_csv_data("mid,dt,v\n"+"MetricId,DateAndTime,Value")
 
 ####  RESPONSES of calls with Flow Metrics Statistics client
 
-Errors originated prior a request to the server has the follow error-codes and description:
-        0: 'param_empty',
-        1: 'list_empty',
-        2: 'csv_data_empty',
-        3: 'bad_csv_header',
-        4: 'bad_csv_row',
-        5: 'flow_id_is_required',
+###### Errors originated prior a request to the server has the follow error-codes and description:
+
+    0: 'param_empty',
+    1: 'list_empty',
+    2: 'csv_data_empty',
+    3: 'bad_csv_header',
+    4: 'bad_csv_row',
+    5: 'flow_id_is_required',
         
 Bad API syntrax:
     
@@ -121,8 +122,7 @@ Bad API syntrax:
     {'status': "bad_request", 'error': "errors-code-desc}
         
         
-For request made to the server, 
-API responds with a HTTP status-code and with application/json status data 
+###### For request made to the server, API responds with a HTTP status-code and with application/json status data 
 
 Bad API syntrax:
 
