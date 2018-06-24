@@ -6,8 +6,7 @@
       or (as available) 
     pip install libthither
       or 
-    to copy the folder https://github.com/kashirin-alex/Thither.Direct-client-libraries/tree/master/python/libthither to your application    
-     
+    copy the folder https://github.com/kashirin-alex/Thither.Direct-client-libraries/tree/master/python/libthither 
     
 ##### DEPENDENCIES
 ###### required:
