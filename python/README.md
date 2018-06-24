@@ -51,18 +51,25 @@ client = FmsClient('YourFlowID',
             FlowMetricsStatisticsClient instance
 
 
-#### PUSHING SINGLE ITEM
+#### A FLOW METRICS STATS ITEM
+Depends on the method used to push the item, while the item definition is the same.
++ MetricId: It is a Metric ID, a user has created on Thither.Direct for a given FlowID
++ DateTime: Format '%Y-%m-%d %H:%M:%S' unless otherwise specified on the metric configurations
++ Value:    String/Integer - Positive, Negative or =Equal, It is the value tracked on the specific time for a metric
+
+
+##### PUSHING SINGLE ITEM
 ```python
-client.push_single(YourMetricId, DateAndTime, Value)
+client.push_single(mid, dt, v)
 ```
             Parameters
             ----------
             mid : str
-                Your Metric ID
+                MetricId
             dt : str
-                Date and time in format '%Y-%m-%d %H:%M:%S' unless otherwise specified on the metric configurations
+                DateTime
             v : str/int
-                value positive, negative or =equal
+                Value
 
             Returns
             -------
@@ -70,9 +77,9 @@ client.push_single(YourMetricId, DateAndTime, Value)
             or an rsp object with status_code and content {'status': 'bad_request', 'error': desc}
 
 
-#### PUSHING MULTIPLE ITEMS - push_list
+##### PUSHING MULTIPLE ITEMS - push_list
 ```python
-client.push_list([[Metric ID, DateTime, Value],])
+client.push_list([[MetricId, DateTime, Value],])
 ```
             Parameters
             ----------
@@ -84,9 +91,9 @@ client.push_list([[Metric ID, DateTime, Value],])
             or an rsp object with status_code and content {'status': 'bad_request', 'error': desc}
 
 
-#### PUSHING MULTIPLE ITEMS - push_csv_data
+##### PUSHING MULTIPLE ITEMS - push_csv_data
 ```python
-client.push_csv_data("mid,dt,v\nMetricId,DateAndTime,Value")
+client.push_csv_data("mid,dt,v\n"+"MetricId,DateAndTime,Value")
 ```
             Parameters
             ----------
