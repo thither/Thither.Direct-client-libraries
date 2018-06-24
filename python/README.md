@@ -66,7 +66,8 @@ client.push_single(YourMetricId, DateAndTime, Value)
 
             Returns
             -------
-            requests lib response or an rsp object with status_code and content {'status': 'bad_request', 'error': desc}
+            requests lib response
+            or an rsp object with status_code and content {'status': 'bad_request', 'error': desc}
 
 
 #### PUSHING MULTIPLE ITEMS - push_list
@@ -79,7 +80,8 @@ client.push_list([[Metric ID, DateTime, Value],])
                 list of items [[Metric ID, DateTime, Value],]
             Returns
             -------
-            requests lib response or an rsp object with status_code and content {'status': 'bad_request', 'error': desc}
+            requests lib response
+            or an rsp object with status_code and content {'status': 'bad_request', 'error': desc}
 
 
 #### PUSHING MULTIPLE ITEMS - push_csv_data
@@ -92,7 +94,8 @@ client.push_csv_data("mid,dt,v\nYourMetricId,DateAndTime,Value")
                 a csv data with 'mid', 'dt', 'v' columns
             Returns
             -------
-            requests lib response or an rsp object with status_code and content {'status': 'bad_request', 'error': desc}
+            requests lib response
+            or an rsp object with status_code and content {'status': 'bad_request', 'error': desc}
 
 
             
