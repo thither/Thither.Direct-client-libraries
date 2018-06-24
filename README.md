@@ -1,4 +1,4 @@
-## Thither.Direct - CLIENT - LIBARARIES
+## Thither.Direct - CLIENT - LIBRARIES
 
 ### CLIENT LIBRARIES
 The libraries are seperated by the client's side language
