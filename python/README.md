@@ -52,7 +52,7 @@ client = FmsClient('YourFlowID',
 
 
 #### A FLOW METRICS STATS ITEM
-Depends on the method used to push the item, while the item definition is the same.
+Depends on the method used to push the item, while the item definition format remain the same.
 + MetricId: It is a Metric ID, a user has created on Thither.Direct for a given FlowID
 + DateTime: Format '%Y-%m-%d %H:%M:%S' unless otherwise specified on the metric configurations
 + Value:    String/Integer - Positive, Negative or =Equal, It is the value tracked on the specific time for a metric
