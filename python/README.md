@@ -9,7 +9,7 @@
      pip install libthither
   
 
-## USAGING THE LIBRARY
+## USING THE LIBRARY
 
 ```python
             from libthither.api.fms import FlowMetricsStatisticsClient
