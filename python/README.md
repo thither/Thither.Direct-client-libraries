@@ -17,7 +17,7 @@
      
   
 ## USING THE LIBRARY
-+ Client APIs are:
++ The APIs are:
   + Flow Metrics Statistics Client
   + (more to come)
 + Utils: 
