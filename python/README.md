@@ -21,20 +21,78 @@ client = FmsClient('YourFlowID',
                    # cipher='AES',
                    keep_alive=True)
 ```
+            Parameters
+            ----------
+            fid : str
+                Your FlowID
+
+            Keyword Args
+            ----------
+            pass_phrase : str
+                Your API pass-phrase,
+                optional depends on Flow configurations
+            https : bool
+                Whether to use https,
+                default True
+            cipher : str
+                Authentication Cipher AES(the only available for now),
+                optional depends on Flow configurations
+            keep_alive : bool
+                Whether to keep session alive,
+                default False
+            json : bool
+                Whether to use only JSON Content-Type,
+                default False
+            requests_args : dict
+                Passed kwargs to 'requests' library
+
+            Returns
+            -------
+            FlowMetricsStatisticsClient instance
+
 
 #### PUSHING SINGLE ITEM
 ```python
 client.push_single(YourMetricId, DateAndTime, Value)
 ```
+            Parameters
+            ----------
+            mid : str
+                Your MetricID
+            dt : str
+                Date and time in format '%Y-%m-%d %H:%M:%S' unless otherwise specified on the metric configurations
+            v : str/int
+                value positive, negative or =equal
+
+            Returns
+            -------
+            requests lib response or an rsp object with status_code and content {'status': 'bad_request', 'error': desc}
+
 
 #### PUSHING MULTIPLE ITEMS - push_list
 ```python
 client.push_list([[Metric ID, DateTime, Value],])
 ```
+            Parameters
+            ----------
+            items : list
+                list of items [[Metric ID, DateTime, Value],]
+            Returns
+            -------
+            requests lib response or an rsp object with status_code and content {'status': 'bad_request', 'error': desc}
+
 
 #### PUSHING MULTIPLE ITEMS - push_csv_data
 ```python
 client.push_csv_data("mid,dt,v\nYourMetricId,DateAndTime,Value")
 ```
-            
+            Parameters
+            ----------
+            csv_data : str
+                a csv data with 'mid', 'dt', 'v' columns
+            Returns
+            -------
+            requests lib response or an rsp object with status_code and content {'status': 'bad_request', 'error': desc}
+
+
             
