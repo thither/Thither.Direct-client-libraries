@@ -118,7 +118,7 @@ client.push_csv_data("mid,dt,v\n"+"MetricId,DateAndTime,Value")
             or an rsp object with status_code and content {'status': 'bad_request', 'error': desc}
 
 
-####  RESPONSES of calls with Flow Metrics Statistics client
+####  RESPONSES to calls with Flow Metrics Statistics client methods
 
 ##### Errors originated prior a request to the server has the follow error-codes and description:
 
@@ -196,7 +196,7 @@ errors:
 
 
 
-#### Flow Metrics Statistics Client - API EXAMPLES
+#### API EXAMPLES - Flow Metrics Statistics Client
 Python libthither [examples-api-fms-client.py](examples-api-fms-client.py)
 
 
