@@ -8,22 +8,20 @@
  
      pip install libthither
   
-
 ## USING THE LIBRARY
 
+### API Client for Flow Metrics Statistics
+
+#### Initiating the client
 ```python
-            from libthither.api.fms import FlowMetricsStatisticsClient
-            client = FlowMetricsStatisticsClient(
-                        'YourFlowID',
-                        pass_phrase='YourPassPhrase',
-                        https=True,
-                        cipher='',
-                        keep_alive=True,
-                        json=False
-                        requests_args={},
-                        )
-            after initiated, client can be called with:
+from libthither.api.fms import FlowMetricsStatisticsClient as FmsClient
+
+client = FmsClient('YourFlowID',
+                   # pass_phrase='YourPassPhrase',
+                   # cipher='AES',
+                   keep_alive=True)
+```
+
             client.push_single(YourMetricId, DateAndTime, Value)
             client.push_list([[Metric ID, DateTime, Value],])
             client.push_csv_data("mid,dt,v\nYourMetricId,DateAndTime,Value")
-```
