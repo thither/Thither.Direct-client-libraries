@@ -7,6 +7,13 @@
  or 
  
      pip install libthither
+### INSTALLATION DEPENDENCIES
+###### required:
+     pip install requests Cryptodome zlib
+###### optional:
+     pip install brotli
+     
+     
   
 ## USING THE LIBRARY
 
