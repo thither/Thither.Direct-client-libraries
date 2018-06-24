@@ -10,7 +10,7 @@
     
 ##### DEPENDENCIES
 ###### required:
-     pip install requests Cryptodome zlib
+     pip install requests Cryptodome 
 ###### optional:
      pip install brotli
      
