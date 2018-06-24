@@ -139,8 +139,8 @@ class FlowMetricsStatisticsClient(object):
         if not self.ps:
             return
         if self.cph == "AES":
-            cipher = AES.new(self.ps, AES.MODE_EAX)
-            cipher.encrypt(','.join(str(v) for v in first_item))
+            cipher = AES.new(b''+self.ps.encode("utf-8"), AES.MODE_EAX)
+            cipher.encrypt((','.join(str(v) for v in first_item)).encode("utf-8"))
             params['digest'] = base64.b64encode(cipher.digest())
             params['nonce'] = base64.b64encode(cipher.nonce)
         else:
@@ -151,15 +151,13 @@ class FlowMetricsStatisticsClient(object):
     def set_compression(params, data):
         params['comp'] = compressor[0]
         if compressor[0] in ['br', 'zlib']:
-            return compressor[1](data)
+            return compressor[1](data.encode("utf-8"))
         return data
         #
 
     def push_single(self, mid, dt, v):
         """
             Push a single item to the server.
-
-            Extended description of function.
 
             Parameters
             ----------
@@ -215,9 +213,7 @@ class FlowMetricsStatisticsClient(object):
             return self.post(json=params)
         else:
             # list converted to csv preferred for data-transfer
-            csv_data = "mid,dt,v\n"
-            for item in items:
-                csv_data += ','.join([str(v) for v in item])+"\n"
+            csv_data = "\n".join(["mid,dt,v"] + [','.join([str(v) for v in item]) for item in items])
             if compressor is not None:
                 csv_data = self.set_compression(params, csv_data)
             return self.post(params=params, files={'csv': csv_data})
@@ -242,7 +238,7 @@ class FlowMetricsStatisticsClient(object):
 
         item = []
         if self.cph:  # get 1st item for auth-digest
-            csv_file = BytesIO(csv_data)
+            csv_file = BytesIO(csv_data.encode("utf-8"))
             dialect = csv.Sniffer().sniff(csv_file.read(2048))
             csv_file.seek(0)
             reader = csv.reader(csv_file, dialect)
