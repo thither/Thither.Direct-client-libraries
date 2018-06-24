@@ -131,7 +131,7 @@ errors:
 
 
 ### API's EXAMPLES
-Python client, [client-examples-fms-api.py](client-examples-fms-api.py), based on https://github.com/requests/requests
+Python client, [example-client-fms-.py](example-client-fms-.py), based on https://github.com/requests/requests
 
 
   
