@@ -49,7 +49,7 @@ client = FmsClient('YourFlowID',
             Returns
             -------
             FlowMetricsStatisticsClient instance
-
+For a not based on libthither, you can check-on [api-without-pkg] guide.
 
 #### A FLOW METRICS STATS ITEM
 Depends on the method used to push the item, while the item definition format remain the same.
