@@ -3,8 +3,7 @@
 ## Install
 
   pip install libthither
-
-python'''
+```python
             from libthither.api.fms import FlowMetricsStatisticsClient
             client = FlowMetricsStatisticsClient(
                         'YourFlowID',
@@ -19,5 +18,4 @@ python'''
             client.push_single(YourMetricId, DateAndTime, Value)
             client.push_list([[Metric ID, DateTime, Value],])
             client.push_csv_data("mid,dt,v\nYourMetricId,DateAndTime,Value")
-
-'''
+```
