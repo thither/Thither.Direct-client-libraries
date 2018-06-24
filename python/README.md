@@ -10,7 +10,7 @@
     
 ##### DEPENDENCIES
 ###### required:
-     pip install requests Cryptodome 
+     pip install requests pycryptodomex 
 ###### optional:
      pip install brotli
      
