@@ -17,9 +17,11 @@
      
   
 ## USING THE LIBRARY
-Client APIs available are:
-+ Client for Flow Metrics Statistics
-Utils: (to come)
++ Client APIs are:
+  + Flow Metrics Statistics Client
+  + (more to come)
++ Utils: 
+  + (still to come)
 
 ### API Client for Flow Metrics Statistics
 
