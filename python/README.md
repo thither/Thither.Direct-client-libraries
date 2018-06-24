@@ -12,7 +12,7 @@
 
 ### API Client for Flow Metrics Statistics
 
-#### Initiating the client
+#### Initiating the Flow Metrics Statistics client
 ```python
 from libthither.api.fms import FlowMetricsStatisticsClient as FmsClient
 
@@ -103,6 +103,75 @@ client.push_csv_data("mid,dt,v\n"+"MetricId,DateAndTime,Value")
             -------
             requests lib response
             or an rsp object with status_code and content {'status': 'bad_request', 'error': desc}
+
+
+####  RESPONSES of calls with Flow Metrics Statistics client
+API responds with a HTTP status-code and with application/json status data
+
+Bad API syntrax:
+
+    status-code: 400
+    {'status': "bad_request"}
+    
+Bad API login (flowId/passphrase/ip-address are not authorized):
+
+    status-code: 401
+    {'status': "unauthorized"}
+    
+Bad API login (digest/nonce mismatch):
+
+    status-code: 401
+    {'status': "unauthorized_digest_mismatch"}
+    
+Bad API syntrax, csv data header:
+
+    status-code: 400
+    {'status': "bad_csv_header"}
+    
+Bad API syntrax, found zero items:
+
+    status-code: 400
+    {'status': "bad_request_empty"}
+    
+Bad API syntrax, missing a field:
+
+    status-code: 400
+    {'status': "bad_request", 'missing': The_Missing_ParameterField}
+   
+Succesfull request:
+
+    status-code: 200
+    {'status': 'OK', 'succeed': Number_Of_Items}
+        
+Partially Succesfull request:
+
+    status-code: 200
+    {'status': 'SOME_ERRORS', 'succeed': Number_Of_Items, 'failed': Number_Of_Items, 'errors': [Corresponding_Errors_and_Items]}
+   
+Failed request:
+
+    status-code: 200
+    {'status': 'BAD', 'failed': Number_Of_Items, 'errors': [Corresponding_Errors_and_Items]}
+    
+    
+###### Corresponding Errors and Items
+'errors' key, a list of items with the error andf the corresponding item
+
+    [[error, mid, dt, v],]
+
+errors: 
++ bad_value:           Value is not -/=/+(number)
++ bad_time_format:     data and time is not in %Y-%m-%d %H:%M:%S format
++ no_such_metric_id:   the metric Id does not exists
++ bad_time_future:     future time is not allowed
+
+
+
+#### Flow Metrics Statistics Client - API EXAMPLES
+Python libthither [examples-api-fms-client.py](examples-api-fms-client.py)
+
+
+
 
 
             
