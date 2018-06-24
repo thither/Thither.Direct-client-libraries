@@ -107,7 +107,7 @@ client.push_csv_data("mid,dt,v\n"+"MetricId,DateAndTime,Value")
 
 ####  RESPONSES of calls with Flow Metrics Statistics client
 
-###### Errors originated prior a request to the server has the follow error-codes and description:
+##### Errors originated prior a request to the server has the follow error-codes and description:
 
     0: 'param_empty',
     1: 'list_empty',
@@ -116,61 +116,61 @@ client.push_csv_data("mid,dt,v\n"+"MetricId,DateAndTime,Value")
     4: 'bad_csv_row',
     5: 'flow_id_is_required',
         
-Bad API syntrax:
+###### Bad API syntrax:
     
     status-code: error-code
     {'status': "bad_request", 'error': "errors-code-desc}
         
         
-###### For request made to the server, API responds with a HTTP status-code and with application/json status data 
+##### For request made to the server, API responds with a HTTP status-code and with application/json status data 
 
-####### Bad API syntrax:
+###### Bad API syntrax:
 
     status-code: 400
     {'status': "bad_request"}
     
-####### Bad API login (flowId/passphrase/ip-address are not authorized):
+###### Bad API login (flowId/passphrase/ip-address are not authorized):
 
     status-code: 401
     {'status': "unauthorized"}
     
-####### Bad API login (digest/nonce mismatch):
+###### Bad API login (digest/nonce mismatch):
 
     status-code: 401
     {'status': "unauthorized_digest_mismatch"}
     
-####### Bad API syntrax, csv data header:
+###### Bad API syntrax, csv data header:
 
     status-code: 400
     {'status': "bad_csv_header"}
     
-Bad API syntrax, found zero items:
+###### Bad API syntrax, found zero items:
 
     status-code: 400
     {'status': "bad_request_empty"}
     
-Bad API syntrax, missing a field:
+###### Bad API syntrax, missing a field:
 
     status-code: 400
     {'status': "bad_request", 'missing': The_Missing_ParameterField}
    
-Succesfull request:
+###### Succesfull request:
 
     status-code: 200
     {'status': 'OK', 'succeed': Number_Of_Items}
         
-Partially Succesfull request:
+###### Partially Succesfull request:
 
     status-code: 200
     {'status': 'SOME_ERRORS', 'succeed': Number_Of_Items, 'failed': Number_Of_Items, 'errors': [Corresponding_Errors_and_Items]}
    
-Failed request:
+###### Failed request:
 
     status-code: 200
     {'status': 'BAD', 'failed': Number_Of_Items, 'errors': [Corresponding_Errors_and_Items]}
     
     
-###### Corresponding Errors and Items
+##### Errors and Corresponding Items
 'errors' key, a list of items with the error andf the corresponding item
 
     [[error, mid, dt, v],]
