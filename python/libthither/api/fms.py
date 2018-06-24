@@ -1,8 +1,13 @@
 # author Kashirin Alex
 
-from io import BytesIO
+import sys
 import csv
 import base64
+
+if sys.version_info.major == 3:
+    from io import StringIO as NormStringIO
+else:
+    from io import BytesIO as NormStringIO
 
 try:
     import requests
@@ -238,7 +243,7 @@ class FlowMetricsStatisticsClient(object):
 
         item = []
         if self.cph:  # get 1st item for auth-digest
-            csv_file = BytesIO(csv_data.encode("utf-8"))
+            csv_file = NormStringIO(csv_data)
             dialect = csv.Sniffer().sniff(csv_file.read(2048))
             csv_file.seek(0)
             reader = csv.reader(csv_file, dialect)
