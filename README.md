@@ -3,7 +3,7 @@
 ### CLIENT LIBRARIES
 The libraries are seperated by the client's side language
 
-+ [PYTHON(python)]
++ [PYTHON](python)
 
 
 
