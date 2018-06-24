@@ -1,8 +1,15 @@
-# Python Client Library
+# Thither.Direct - Python - Library
 
-## Install
+## INSTALL
+   
+   
+   pip install https://github.com/kashirin-alex/Thither.Direct-client-libraries/releases/download/libthither-v0.10.0/libthither-0.10.0.tar.gz
+   or 
+   pip install libthither
+  
 
-  pip install libthither
+## USAGING THE LIBRARY
+
 ```python
             from libthither.api.fms import FlowMetricsStatisticsClient
             client = FlowMetricsStatisticsClient(
