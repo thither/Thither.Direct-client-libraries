@@ -124,22 +124,22 @@ Bad API syntrax:
         
 ###### For request made to the server, API responds with a HTTP status-code and with application/json status data 
 
-Bad API syntrax:
+####### Bad API syntrax:
 
     status-code: 400
     {'status': "bad_request"}
     
-Bad API login (flowId/passphrase/ip-address are not authorized):
+####### Bad API login (flowId/passphrase/ip-address are not authorized):
 
     status-code: 401
     {'status': "unauthorized"}
     
-Bad API login (digest/nonce mismatch):
+####### Bad API login (digest/nonce mismatch):
 
     status-code: 401
     {'status': "unauthorized_digest_mismatch"}
     
-Bad API syntrax, csv data header:
+####### Bad API syntrax, csv data header:
 
     status-code: 400
     {'status': "bad_csv_header"}
