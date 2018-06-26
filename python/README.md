@@ -147,6 +147,11 @@ client.push_csv_data("mid,dt,v\n"+"MetricId,DateAndTime,Value")
     status-code: 401
     {'status': "unauthorized"}
     
+###### Bad API login (ip address is blocked, open a ticket):
+
+    status-code: 401
+    {'status': "unauthorized_ip_blocked"}
+    
 ###### Bad API login (digest/nonce mismatch):
 
     status-code: 401
