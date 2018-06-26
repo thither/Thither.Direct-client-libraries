@@ -41,7 +41,7 @@ items = [[mid, (dt_now - datetime.timedelta(days=d, minutes=m, seconds=s)).strft
          for d in range(0, 28)             # 28 days
          for c in range(1000, 3000, 1000)  # 2x values once at 0sec second at 30sec
          ]
-print ('Num Items:' + str(len(items)))  # 504000 (items) , value(5 minute time frame = 5x2x(1000+3000))
+print ('Num Items:' + str(len(items)))  # 2016,000 (items) , value(5 minute time frame = 5x2x(1000+2000))
 
 # CSV EXAMPLE DATA
 csv_data = "\n".join(["mid,dt,v"]+[','.join([str(v) for v in item]) for item in items])
