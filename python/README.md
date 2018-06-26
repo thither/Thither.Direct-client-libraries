@@ -150,7 +150,7 @@ client.push_csv_data("mid,dt,v\n"+"MetricId,DateAndTime,Value")
 ###### Bad API login (digest/nonce mismatch):
 
     status-code: 401
-    {'status': "unauthorized_digest_mismatch"}
+    {'status': "unauthorized_encryption_mismatch"}
     
 ###### Bad API syntrax, csv data header:
 
