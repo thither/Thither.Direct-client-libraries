@@ -194,11 +194,11 @@ client.push_csv_data("mid,dt,v\n"+"MetricId,DateAndTime,Value")
     [[error, mid, dt, v],]
 
 errors: 
-+ bad_value:           Value is not -/=/+(number)
-+ bad_time_format:     data and time is not in %Y-%m-%d %H:%M:%S format
-+ no_such_metric_id:   the metric Id does not exists
-+ bad_time_future:     future time is not allowed
-
++ bad_value:                  Value is not -/=/+(number)
++ bad_time_format:            data and time is not in %Y-%m-%d %H:%M:%S format
++ no_such_metric_id:          the metric Id does not exists
++ bad_time_future:            future time is not allowed
++ bad_time_prior_acc_active:  12 weeks prior account creation is not allowed
 
 
 #### API EXAMPLES - Flow Metrics Statistics Client
