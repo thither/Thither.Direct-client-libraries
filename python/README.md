@@ -43,7 +43,7 @@ client = FmsClient('YourFlowID',
             ----------
             pass_phrase : str
                 Your API pass-phrase,
-                optional depends on Flow configurations
+                optional depends on Flow configurations and not required with allowed IP address are set
             https : bool
                 Whether to use https,
                 default True
