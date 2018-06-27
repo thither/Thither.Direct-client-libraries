@@ -132,46 +132,36 @@ client.push_csv_data("mid,dt,v\n"+"MetricId,DateAndTime,Value")
 ###### Bad API syntrax:
     
     status-code: error-code
-    {'status': "bad_request", 'error': "errors-code-desc}
+    {"status": "bad_request", "error": "errors-code-desc}
         
         
 ##### For request made to the server, API responds with a HTTP status-code and with application/json status data 
 
 ###### Bad API syntrax:
 
-    status-code: 400
-    {'status': "bad_request"}
-    
-###### Bad API login (flowId/passphrase/ip-address are not authorized):
+messages and description:
++ access_detail
++ not_supported_compression
++ bad_csv_header - wrong csv data header
++ item_missing - found zero items
++ missing_param: +field - item is missing a parameter
+-
 
-    status-code: 401
-    {'status': "unauthorized"}
+     status-code: 400
+     {"status": "bad_request", "msg": MESSAGE}
     
-###### Bad API login (ip address is blocked, open a ticket):
+###### Bad API login:
 
-    status-code: 401
-    {'status': "unauthorized_ip_blocked"}
-    
-###### Bad API login (digest/nonce mismatch):
+messages and description:
++ ip_blocked - ip address is blocked, open a ticket
++ encryption_mismatch - digest/nonce mismatch
++ api_access - missing access parameters
++ flow_acc_expired - Flow Metrics Statistics account has expired
+-
 
-    status-code: 401
-    {'status': "unauthorized_encryption_mismatch"}
-    
-###### Bad API syntrax, csv data header:
+     status-code: 401
+     {"status": "unauthorized", "msg": MESSAGE}
 
-    status-code: 400
-    {'status': "bad_csv_header"}
-    
-###### Bad API syntrax, found zero items:
-
-    status-code: 400
-    {'status': "bad_request_empty"}
-    
-###### Bad API syntrax, missing a field:
-
-    status-code: 400
-    {'status': "bad_request", 'missing': The_Missing_ParameterField}
-   
 ###### Succesfull request:
 
     status-code: 200
@@ -180,20 +170,20 @@ client.push_csv_data("mid,dt,v\n"+"MetricId,DateAndTime,Value")
 ###### Partially Succesfull request:
 
     status-code: 200
-    {'status': 'SOME_ERRORS', 'succeed': Number_Of_Items, 'failed': Number_Of_Items, 'errors': [Corresponding_Errors_and_Items]}
+    {'status': 'SOME_ERRORS', 'succeed': Number_Of_Items, 'failed': Number_Of_Items, 'errors': [Errors_and_Corresponding_Items]}
    
 ###### Failed request:
 
     status-code: 200
-    {'status': 'BAD', 'failed': Number_Of_Items, 'errors': [Corresponding_Errors_and_Items]}
+    {'status': 'BAD', 'failed': Number_Of_Items, 'errors': [Errors_and_Corresponding_Items]}
     
     
 ##### Errors and Corresponding Items
-'errors' key, a list of items with the error andf the corresponding item
+respond's 'errors' key, a list of items with the error and the corresponding item
 
     [[error, mid, dt, v],]
 
-errors: 
+errors and description:
 + bad_value:                  Value is not -/=/+(number)
 + bad_time_format:            data and time is not in %Y-%m-%d %H:%M:%S format
 + no_such_metric_id:          the metric Id does not exists
