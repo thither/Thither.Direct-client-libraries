@@ -75,55 +75,41 @@ Depends on the method used to push the item, while the item definition format re
 ```python
 client.push_single(mid, dt, v)
 ```
-            Parameters
-            ----------
-            mid : str
-                MetricId
-            dt : str
-                DateTime
-            v : str/int
-                Value
-
-            Returns
-            -------
-            requests lib response
-            or an rsp object with status_code and content {'status': 'bad_request', 'error': desc}
++ Parameters
+  + mid: str, MetricId
+  + dt: str,  DateTime
+  + v: str/int,   Value
++ Returns
+  + 'requests' lib response
+  + or an rsp object with status_code and content {'status': 'bad_request', 'error': desc}
 
 
 ##### PUSHING MULTIPLE ITEMS - push_list
 ```python
 client.push_list([[MetricId, DateTime, Value],])
 ```
-            Parameters
-            ----------
-            items : list
-                list of items [[MetricId, DateTime, Value],]
-            Returns
-            -------
-            requests lib response
-            or an rsp object with status_code and content {'status': 'bad_request', 'error': desc}
++ Parameters
+  + items: list, a list of items [[MetricId, DateTime, Value],]
++ Returns
+  + 'requests' lib response
+  + or an rsp object with status_code and content {'status': 'bad_request', 'error': desc}
 
 
 ##### PUSHING MULTIPLE ITEMS - push_csv_data
 ```python
 client.push_csv_data("mid,dt,v\n"+"MetricId,DateAndTime,Value")
 ```
-            Parameters
-            ----------
-            csv_data : str
-                a csv data with 'mid', 'dt', 'v' columns
-            Returns
-            -------
-            requests lib response
-            or an rsp object with status_code and content {'status': 'bad_request', 'error': desc}
++ Parameters
+  + csv_data: str, a csv data with 'mid', 'dt', 'v' columns
++ Returns
+  + 'requests' lib response
+  + or an rsp object with status_code and content {'status': 'bad_request', 'error': desc}
 
 
 ####  RESPONSES to calls with Flow Metrics Statistics client methods
 
-##### Errors originated prior a request to the server
+###### Errors originated prior a request to the server, Bad API Request syntrax:
 
-###### Bad API syntrax:
-    
     status-code: error-code
     {"status": "bad_request", "error": "errors-code-desc}
     
@@ -135,9 +121,9 @@ client.push_csv_data("mid,dt,v\n"+"MetricId,DateAndTime,Value")
   + 4: 'bad_csv_row',
   + 5: 'flow_id_is_required',
         
-##### For request made to the server, API responds with a HTTP status-code and with application/json status data 
+##### API responds with a HTTP status-code and with application/json status data for request made to the server
 
-###### Bad API Request, Response syntrax:
+###### Bad API request, Response syntrax:
 
      status-code: 400
      {"status": "bad_request", "msg": MESSAGE}
@@ -160,17 +146,17 @@ client.push_csv_data("mid,dt,v\n"+"MetricId,DateAndTime,Value")
   + api_access - missing access parameters
   + flow_acc_expired - Flow Metrics Statistics account has expired
 
-###### Succesfull request, Response syntrax:
+###### Succesfull API request, Response syntrax:
 
     status-code: 200
     {'status': 'OK', 'succeed': Number_Of_Items}
         
-###### Partially Succesfull request, Response syntrax:
+###### Partially Succesfull API request, Response syntrax:
 
     status-code: 200
     {'status': 'SOME_ERRORS', 'succeed': Number_Of_Items, 'failed': Number_Of_Items, 'errors': [Errors_and_Corresponding_Items]}
    
-###### Failed request, Response syntrax:
+###### Failed API request, Response syntrax:
 
     status-code: 200
     {'status': 'BAD', 'failed': Number_Of_Items, 'errors': [Errors_and_Corresponding_Items]}
