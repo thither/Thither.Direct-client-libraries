@@ -120,7 +120,14 @@ client.push_csv_data("mid,dt,v\n"+"MetricId,DateAndTime,Value")
 
 ####  RESPONSES to calls with Flow Metrics Statistics client methods
 
-##### Errors originated prior a request to the server has the follow error-codes and description:
+##### Errors originated prior a request to the server
+
+###### Bad API syntrax:
+    
+    status-code: error-code
+    {"status": "bad_request", "error": "errors-code-desc}
+    
+error-codes and description:
 
     0: 'param_empty',
     1: 'list_empty',
@@ -129,12 +136,6 @@ client.push_csv_data("mid,dt,v\n"+"MetricId,DateAndTime,Value")
     4: 'bad_csv_row',
     5: 'flow_id_is_required',
         
-###### Bad API syntrax:
-    
-    status-code: error-code
-    {"status": "bad_request", "error": "errors-code-desc}
-        
-        
 ##### For request made to the server, API responds with a HTTP status-code and with application/json status data 
 
 ###### Bad API Request, Response syntrax:
@@ -142,19 +143,19 @@ client.push_csv_data("mid,dt,v\n"+"MetricId,DateAndTime,Value")
      status-code: 400
      {"status": "bad_request", "msg": MESSAGE}
 
-messages and description:
-+ access_detail - missing access parameters
-+ not_supported_compression - comperssion used is not supported
-+ bad_csv_header - wrong csv data header
-+ item_missing - found zero items
-+ missing_param: +field - item is missing a parameter
++ messages and description:
+  + access_detail - missing access parameters
+  + not_supported_compression - comperssion used is not supported
+  + bad_csv_header - wrong csv data header
+  + item_missing - found zero items
+  + missing_param: +field - item is missing a parameter
 
 ###### Bad API auth request, Response syntrax:
 
      status-code: 401
      {"status": "unauthorized", "msg": MESSAGE}
 
-messages and description:
++ messages and description:
   + ip_blocked - ip address is blocked, open a ticket
   + encryption_mismatch - digest/nonce mismatch
   + api_access - missing access parameters
