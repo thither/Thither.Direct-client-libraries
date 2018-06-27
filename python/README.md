@@ -127,14 +127,13 @@ client.push_csv_data("mid,dt,v\n"+"MetricId,DateAndTime,Value")
     status-code: error-code
     {"status": "bad_request", "error": "errors-code-desc}
     
-error-codes and description:
-
-    0: 'param_empty',
-    1: 'list_empty',
-    2: 'csv_data_empty',
-    3: 'bad_csv_header',
-    4: 'bad_csv_row',
-    5: 'flow_id_is_required',
++ error-codes and description:
+  + 0: 'param_empty',
+  + 1: 'list_empty',
+  + 2: 'csv_data_empty',
+  + 3: 'bad_csv_header',
+  + 4: 'bad_csv_row',
+  + 5: 'flow_id_is_required',
         
 ##### For request made to the server, API responds with a HTTP status-code and with application/json status data 
 
@@ -182,12 +181,12 @@ respond's 'errors' key, a list of items with the error and the corresponding ite
 
     [[error, mid, dt, v],]
 
-errors and description:
-+ bad_value:                  Value is not -/=/+(number)
-+ bad_time_format:            data and time is not in %Y-%m-%d %H:%M:%S format
-+ no_such_metric_id:          the metric Id does not exists
-+ bad_time_future:            future time is not allowed
-+ bad_time_prior_acc_active:  12 weeks prior account creation is not allowed
++ errors and description:
+  + bad_value:                  Value is not -/=/+(number)
+  + bad_time_format:            data and time is not in %Y-%m-%d %H:%M:%S format
+  + no_such_metric_id:          the metric Id does not exists
+  + bad_time_future:            future time is not allowed
+  + bad_time_prior_acc_active:  12 weeks prior account creation is not allowed
 
 
 #### API EXAMPLES - Flow Metrics Statistics Client
