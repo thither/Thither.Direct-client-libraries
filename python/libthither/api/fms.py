@@ -36,18 +36,11 @@ class FlowMetricsStatisticsClient(object):
     __slots__ = ['u', 'fid', 'ps', 'cph', 'json', 's', 'ka', 'requests_args']
 
     root_url = '://thither.direct/api/fms/post/'
-    errors = {
-        0: 'param_empty',
-        1: 'list_empty',
-        2: 'csv_data_empty',
-        3: 'bad_csv_header',
-        4: 'bad_csv_row',
-        5: 'flow_id_is_required',
-    }
-    dep_errs = {
+    except_errs = {
         'AES': 'requested cipher AES, pkg Cryptodome is not installed!',
         'AES_ps': 'AES cipher require key(pass-phrase) 16, 24 or 32 in chars length!',
-        'requests': 'pkg requests is not installed!'
+        'requests': 'pkg requests is not installed!',
+        'fid': 'flow_id_is_required'
     }
 
     def __init__(self, fid, **kwargs):
@@ -103,19 +96,19 @@ class FlowMetricsStatisticsClient(object):
 
         self.fid = fid
         if not self.fid:
-            raise Exception('error', self.errors[5])
+            raise Exception('error', self.except_errs['fid'])
 
         self.ps = kwargs.get('pass_phrase', '')
 
         self.cph = kwargs.get('cipher', '')
         if self.cph == 'AES':
             if AES is None:
-                raise Exception('error', self.dep_errs['AES'])
+                raise Exception('error', self.except_errs['AES'])
             if len(self.ps) not in [16, 24, 32]:
-                raise Exception('error', self.dep_errs['AES_ps'])
+                raise Exception('error', self.except_errs['AES_ps'])
 
         if requests is None:
-            raise Exception('error', self.dep_errs['requests'])
+            raise Exception('error', self.except_errs['requests'])
         self.s = requests.Session() if kwargs.get('keep_alive', False) else None
 
         self.json = kwargs.get('json', False)
@@ -178,12 +171,12 @@ class FlowMetricsStatisticsClient(object):
             requests lib response or an rsp object with status_code and content {'status': 'bad_request', 'error': desc}
         """
         if not mid or not dt or (not v and v != 0):
-            return self.bad_req(0)
+            return BadReq(0)
         if not isinstance(v, int):
             try:
                 tmp = int(v if v[0] != '=' else v[1:])
             except:
-                return self.bad_req(0)
+                return BadReq(0)
 
         params = {'mid': mid, 'dt': dt, 'v': v}
         self.set_params(params, [mid, dt, v])
@@ -208,7 +201,7 @@ class FlowMetricsStatisticsClient(object):
             requests lib response or an rsp object with status_code and content {'status': 'bad_request', 'error': desc}
         """
         if not items:
-            return self.bad_req(1)
+            return BadReq(1)
 
         params = {}
         self.set_params(params, items[0])
@@ -239,7 +232,7 @@ class FlowMetricsStatisticsClient(object):
             requests lib response or an rsp object with status_code and content {'status': 'bad_request', 'error': desc}
         """
         if not csv_data:
-            return self.bad_req(2)
+            return BadReq(2)
 
         item = []
         if self.cph:  # get 1st item for auth-digest
@@ -256,10 +249,10 @@ class FlowMetricsStatisticsClient(object):
                         if c in ['mid', 'dt', 'v']:
                             fc[c] = i
                     if len(fc) != 3:
-                        return self.bad_req(3)
+                        return BadReq(3)
                     continue
                 if not row:
-                    return self.bad_req(4)
+                    return BadReq(4)
                 l_row = len(row)
                 for f in ['mid', 'dt', 'v']:
                     if l_row <= fc[f]:
@@ -268,7 +261,7 @@ class FlowMetricsStatisticsClient(object):
                 break
             csv_file.close()
             if len(item) < 3:
-                return self.bad_req(4)
+                return BadReq(4)
 
         params = {}
         self.set_params(params, item)
@@ -279,14 +272,6 @@ class FlowMetricsStatisticsClient(object):
             if compressor is not None:
                 csv_data = self.set_compression(params, csv_data)
             return self.post(params=params, files={'csv': csv_data})
-        #
-
-    @classmethod
-    def bad_req(cls, c):
-        rsp = object()
-        rsp.status_code = c
-        rsp.content = {'status': 'bad_request', 'error': cls.errors[c]}
-        return rsp
         #
 
     def post(self, **kwargs):
@@ -302,8 +287,21 @@ class FlowMetricsStatisticsClient(object):
         if self.s is not None:
             self.s.close()
         #
+#
 
 
+class BadReq(object):
+    __slots__ = ['status_code', 'content']
+    errors = {
+        0: 'param_empty',
+        1: 'list_empty',
+        2: 'csv_data_empty',
+        3: 'bad_csv_header',
+        4: 'bad_csv_row',
+    }
 
-
-
+    def __init__(self, c):
+        self.status_code = c
+        self.content = {'status': 'bad_request', 'msg': self.errors[c]}
+        #
+#
