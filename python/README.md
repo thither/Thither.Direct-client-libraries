@@ -111,9 +111,9 @@ client.push_csv_data("mid,dt,v\n"+"MetricId,DateAndTime,Value")
 ###### Errors originated prior a request to the server, Bad API Request syntrax:
 
     status-code: error-code
-    {"status": "bad_request", "error": "errors-code-desc}
+    {"status": "bad_request", "msg": MESSAGE}
     
-+ error-codes and description:
++ error-codes and messages:
   + 0: 'param_empty',
   + 1: 'list_empty',
   + 2: 'csv_data_empty',
