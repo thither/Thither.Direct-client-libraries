@@ -137,42 +137,40 @@ client.push_csv_data("mid,dt,v\n"+"MetricId,DateAndTime,Value")
         
 ##### For request made to the server, API responds with a HTTP status-code and with application/json status data 
 
-###### Bad API syntrax:
-
-messages and description:
-+ access_detail
-+ not_supported_compression
-+ bad_csv_header - wrong csv data header
-+ item_missing - found zero items
-+ missing_param: +field - item is missing a parameter
--
+###### Bad API Request, Response syntrax:
 
      status-code: 400
      {"status": "bad_request", "msg": MESSAGE}
-    
-###### Bad API login:
 
 messages and description:
-+ ip_blocked - ip address is blocked, open a ticket
-+ encryption_mismatch - digest/nonce mismatch
-+ api_access - missing access parameters
-+ flow_acc_expired - Flow Metrics Statistics account has expired
--
++ access_detail - missing access parameters
++ not_supported_compression - comperssion used is not supported
++ bad_csv_header - wrong csv data header
++ item_missing - found zero items
++ missing_param: +field - item is missing a parameter
+
+###### Bad API auth request, Response syntrax:
 
      status-code: 401
      {"status": "unauthorized", "msg": MESSAGE}
 
-###### Succesfull request:
+messages and description:
+  + ip_blocked - ip address is blocked, open a ticket
+  + encryption_mismatch - digest/nonce mismatch
+  + api_access - missing access parameters
+  + flow_acc_expired - Flow Metrics Statistics account has expired
+
+###### Succesfull request, Response syntrax:
 
     status-code: 200
     {'status': 'OK', 'succeed': Number_Of_Items}
         
-###### Partially Succesfull request:
+###### Partially Succesfull request, Response syntrax:
 
     status-code: 200
     {'status': 'SOME_ERRORS', 'succeed': Number_Of_Items, 'failed': Number_Of_Items, 'errors': [Errors_and_Corresponding_Items]}
    
-###### Failed request:
+###### Failed request, Response syntrax:
 
     status-code: 200
     {'status': 'BAD', 'failed': Number_Of_Items, 'errors': [Errors_and_Corresponding_Items]}
