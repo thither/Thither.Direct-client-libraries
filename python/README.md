@@ -24,6 +24,7 @@
   + (still to come)
 
 ### API - Flow Metrics Statistics Client
+After you have created your [Flow Metrics Statistics account](https://thither.direct/information/services/commercial/analytic_services/fms) and have your FlowID 
 
 #### Initiating the Flow Metrics Statistics client
 ```python
