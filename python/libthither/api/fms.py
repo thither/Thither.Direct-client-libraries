@@ -3,7 +3,7 @@
 import sys
 import csv
 import base64
-
+import datetime
 if sys.version_info.major == 3:
     from io import StringIO as NormStringIO
 else:
@@ -33,9 +33,9 @@ except:
 
 
 class FlowMetricsStatisticsClient(object):
-    __slots__ = ['u', 'fid', 'ps', 'cph', 'json', 's', 'ka', 'requests_args']
+    __slots__ = ['u_push', 'u_get', 'fid', 'ps', 'cph', 'json', 's', 'ka', 'requests_args']
 
-    root_url = '://thither.direct/api/fms/post/'
+    root_url = '://thither.direct/api/fms/'
     except_errs = {
         'AES': 'requested cipher AES, pkg Cryptodome is not installed!',
         'AES_ps': 'AES cipher require key(pass-phrase) 16, 24 or 32 in chars length!',
@@ -91,8 +91,9 @@ class FlowMetricsStatisticsClient(object):
             -------
             FlowMetricsStatisticsClient instance
         """
-
-        self.u = 'http'+('s' if kwargs.get('https', True) else '')+self.root_url
+        u = 'http'+('s' if kwargs.get('https', True) else '')+self.root_url
+        self.u_push = u+"/post/"
+        self.u_get = u+"/get/"
 
         self.fid = fid
         if not self.fid:
@@ -115,7 +116,7 @@ class FlowMetricsStatisticsClient(object):
         self.requests_args = kwargs.get('requests_args', None)
         #
 
-    def set_params(self, params, first_item=None):
+    def set_push_params(self, params, first_item=None):
         """
             Set the corresponding parameters for a request.
 
@@ -179,7 +180,7 @@ class FlowMetricsStatisticsClient(object):
                 return BadReq(0)
 
         params = {'mid': mid, 'dt': dt, 'v': v}
-        self.set_params(params, [mid, dt, v])
+        self.set_push_params(params, [mid, dt, v])
         if self.json:
             return self.post(json=params)
         else:
@@ -204,7 +205,7 @@ class FlowMetricsStatisticsClient(object):
             return BadReq(1)
 
         params = {}
-        self.set_params(params, items[0])
+        self.set_push_params(params, items[0])
 
         if self.json:
             params['items'] = items
@@ -264,7 +265,7 @@ class FlowMetricsStatisticsClient(object):
                 return BadReq(4)
 
         params = {}
-        self.set_params(params, item)
+        self.set_push_params(params, item)
         if self.json:
             params['csv'] = csv_data
             return self.post(json=params)
@@ -278,9 +279,152 @@ class FlowMetricsStatisticsClient(object):
         if self.requests_args is not None:
             kwargs.update(self.requests_args)
         if self.s is not None:
-            return self.s.post(self.u, **kwargs)
+            return self.s.post(self.u_push, **kwargs)
         else:
-            return requests.post(self.u, **kwargs)
+            return requests.post(self.u_push, **kwargs)
+        #
+
+    def get_definitions(self, typ='', **kwargs):
+        """
+            Get Flow Definitions.
+
+            Arguments
+            ----------
+            typ : str
+                Type of Definition units/sections/metrics
+                or selects all definitions
+
+            Keyword Args
+            ----------
+            section : str
+                Only on this section level
+                apply only to sections and metrics types
+            unit : str
+                Only metrics with this Unit ID
+            operation : str
+                Only metrics that timebase join operation is sum/avg
+            timebase : str/int
+                Only metrics that with this timebase(minutes)
+
+            Returns
+            -------
+            'requests' lib response with JSON content of a dict{DEFINITION_TYPE: {TYPE_ID: {INFO_NAME: VALUE}}
+        """
+
+        if typ not in ['', 'units', 'sections', 'metrics']:
+            return BadReq(5)
+
+        params = {}
+        if typ == 'units':
+            pass
+        else:
+            v = kwargs.get('section', False)
+            if v:
+                params['section'] = v
+            if typ == 'metrics':
+                for k in ['unit', 'operation', 'timebase', 'tz']:
+                    v = kwargs.get(k, False)
+                    if not v:
+                        continue
+                    params[k] = v
+        self.set_get_params(params)
+        return self.get(self.u_get+"definitions/"+typ+"/", params=params)
+        #
+
+    def get_stats(self, mid, from_ts, to_ts, **kwargs):
+        """
+            Get Metric Statistics Data.
+
+            Arguments
+            ----------
+            mid : str
+                Your Metric ID
+            from_ts : int
+                select only from timestamp
+            to_ts : int
+                select only to timestamp
+
+            Keyword Args
+            ----------
+            base : int
+                time frame base - minutes
+            tz : int
+                timezone align to GMT +/-hours
+            time_format : str
+                default '%Y/%m/%d %H:%M' decreased with higher base
+            limit : int
+                results limit, 0:no-limit (max 1,000,000)
+            page : int
+                start from page number
+            Returns
+            -------
+            'requests' lib response with JSON content of:
+             a dict{
+                    'items': [[date-time, value],],
+                    'next_page': INT, # False for now more items
+             }
+        """
+        if not isinstance(from_ts, int) or not isinstance(to_ts, int) or from_ts > to_ts:
+            return BadReq(6)
+
+        if not mid:
+            return BadReq(0)
+
+        params = {'mid': mid, 'from': from_ts, 'to': to_ts}
+
+        v = kwargs.pop('time_format', None)
+        if v is not None:
+            try:
+                datetime.datetime.now().strftime(v)
+                params['tf'] = v
+            except:
+                return BadReq(8)
+
+        for k in ['base', 'tz', 'limit', 'page']:
+            v = kwargs.get(k, False)
+            if not v:
+                continue
+            if not isinstance(v, int):
+                return BadReq(7)
+            params[k] = v
+        self.set_get_params(params)
+        return self.get(self.u_get+"stats/", params=params)
+        #
+
+    def set_get_params(self, params):
+        """
+            Set the corresponding parameters for a request.
+
+            The function set the predefined parameters in the instance
+            and if cipher is used calculates a nonce and a digest for authenticating
+
+            Parameters
+            ----------
+            params : dict
+                a reference to the dict to work with
+            Returns
+            -------
+            None
+        """
+        params['fid'] = self.fid  # Flow Metrics Statistics ID
+        if not self.ps:
+            return
+        if self.cph == "AES":
+            cipher = AES.new(b''+self.ps.encode("utf-8"), AES.MODE_EAX)
+            cipher.encrypt((','.join(str(k)+'-'+str(params[k]) for k in sorted(list(params.keys())))).encode("utf-8"))
+            params['digest'] = base64.b64encode(cipher.digest())
+            params['nonce'] = base64.b64encode(cipher.nonce)
+        else:
+            params['ps'] = self.ps
+        #
+
+    def get(self, u, **kwargs):
+        if self.requests_args is not None:
+            kwargs.update(self.requests_args)
+        if self.s is not None:
+            return self.s.get(u, **kwargs)
+        else:
+            return requests.get(u, **kwargs)
         #
 
     def close(self):
@@ -298,6 +442,10 @@ class BadReq(object):
         2: 'csv_data_empty',
         3: 'bad_csv_header',
         4: 'bad_csv_row',
+        5: 'bad_definition_type',
+        6: 'bad_timestamps',
+        7: 'bad_kwarg_value',
+        8: 'bad_time_format',
     }
 
     def __init__(self, c):
