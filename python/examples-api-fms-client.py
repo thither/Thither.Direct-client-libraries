@@ -43,7 +43,7 @@ items = [[mid, (dt_now - datetime.timedelta(days=d, minutes=m, seconds=s)).strft
          for mid in range(2, 7)            # 5 metric IDs range
          for s in range(0, 60, 30)         # seconds in minute / twice a minute
          for m in range(0, 3600)           # minutes in 1 day
-         for d in range(0, 1)              # days
+         for d in range(0, 28)             # days
          for c in range(1000, 3000, 1000)  # 2x values once at 0sec second at 30sec
          ]
 print ('Num Items:' + str(len(items)))  # num_items=days*72000 () , value(5 minute time frame = 5x2x(1000+2000))
@@ -219,10 +219,3 @@ print ('EXAMPLE FOR GETTING STATS DATA - END')
 print ('*'*79)
 
 client.close()
-rsp = client.push_single('2', dt_now.strftime('%Y-%m-%d %H:%M:%S'), 123)
-exit()
-
-
-
-
-
