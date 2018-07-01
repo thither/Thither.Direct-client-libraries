@@ -349,7 +349,7 @@ class FlowMetricsStatisticsClient(object):
             base : int
                 time frame base - minutes
             tz : int
-                timezone align to GMT +/-hours
+                timezone align to GMT +/- minutes
             time_format : str
                 default '%Y/%m/%d %H:%M' decreased with higher base
             limit : int
