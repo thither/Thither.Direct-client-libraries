@@ -361,7 +361,7 @@ class FlowMetricsStatisticsClient(object):
             'requests' lib response with JSON content of:
              a dict{
                     'items': [[date-time, value],],
-                    'next_page': INT, # False for now more items
+                    'next_page': INT, # False for no more items
              }
         """
         if not isinstance(from_ts, int) or not isinstance(to_ts, int) or from_ts > to_ts:
