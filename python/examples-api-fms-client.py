@@ -166,7 +166,7 @@ else:
 
 # last N days
 
-timezone = (-1*(time.timezone/3600)+time.daylight)*60
+timezone = int(-1*(time.timezone/60)+time.daylight*60)
 # timezone = (dt_now-datetime.datetime.utcnow()).seconds/60
 
 dt_begin = dt_now - datetime.timedelta(days=8)
