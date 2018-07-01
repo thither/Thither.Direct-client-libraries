@@ -166,8 +166,8 @@ else:
 
 # last N days
 
-timezone = -1*(time.timezone/3600)+time.daylight
-# timezone = (dt_now-datetime.datetime.utcnow()).seconds/3600
+timezone = (-1*(time.timezone/3600)+time.daylight)*60
+# timezone = (dt_now-datetime.datetime.utcnow()).seconds/60
 
 dt_begin = dt_now - datetime.timedelta(days=8)
 dt_begin = datetime.datetime(dt_begin.year, dt_begin.month, dt_begin.day, 0, 0, 0)
@@ -193,7 +193,7 @@ for metric_id in list(metrics.keys()):
                                from_ts,      # from timestamp
                                to_ts,        # to timestamp
                                base=1440,    # time frame base - minutes, groups lower metric base to this base
-                               tz=timezone,  # timezone
+                               tz=timezone,  # timezone GMT +/- minutes
                                time_format='%Y/%m/%d',  # default '%Y/%m/%d %H:%M' decreased with higher base
                                limit=7,   # results limit, 0:no-limit max:1,000,000
                                page=page     # start from page number
