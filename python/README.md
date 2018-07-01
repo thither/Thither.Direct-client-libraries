@@ -54,7 +54,7 @@ client = FmsClient('YourFlowID',
 + Returns
   + FlowMetricsStatisticsClient instance
         
-For a not based on libthither, you can check-on [api-without-pkg] guide.
+For a not based on libthither, you can check-on (api-without-pkg)[api-without-pkg] guide.
 
 ### PUSHING/POSTING FLOW STATISTICS DATA
 
@@ -99,7 +99,7 @@ client.push_csv_data("mid,dt,v\n"+"MetricId,DateAndTime,Value")
   + 'requests' lib response
   + or an rsp object with status_code and content {'status': 'bad_request', 'error': desc}
 
-### GETTING FLOW STATISTICS DATA
+### GETTING FLOW DATA
 
 ##### GETTING DEFINITIONS DATA - all/units/sections/metrics
 ```python
@@ -130,6 +130,74 @@ else:
     print (rsp.status_code)
     print (rsp.content)
 ```
+##### GETTING STATISTICS DATA - all/units/sections/metrics
+```python
+client.get_stats(metric_id,    # Your Metric ID
+                 from_ts,      # from timestamp
+                 to_ts,        # to timestamp
+                 base=1440,    # time frame base - minutes, groups lower metric base to this base
+                 tz=timezone,  # timezone
+                 time_format='%Y/%m/%d',  # default '%Y/%m/%d %H:%M' decreased with higher base
+                 limit=7,      # results limit, 0:no-limit max:1,000,000
+                 page=1        # start from page number
+                 )
+```
++ Parameters
+  + metric_id: str,    Your Metric ID
+  + from_ts: int,      Select from this timestamp(seconds) inclusive
+  + to_ts: int,        Select to this timestamp(seconds) inclusive
+
++ Keyword Args
+  +  base : int,        time frame base - minutes, lower metric base data will be grouped to this base 
+  +  tz : int,          hours, positive or negative relatively to GMT-0
+  +  time_format : str, Group items on this time format, default '%Y/%m/%d %H:%M' decreased for higher base
+  +  limit : int,       get only this number of items, 0:no-limit max:1,000,000
+  +  page : int,        get items from this page
+  
++ Returns
+  + 'requests' lib response
+  + with JSON content of a dict{
+                    'items': [[date-time, value],],  # descending order, newest to oldest
+                    'next_page': INT, # False for no more items
+             }
+  + or an rsp object with status_code and content {'status': 'bad_request', 'error': desc}
+  
+usage example, getting previous 7 days of MetricID data by one-hour items
+```python
+
+timezone = -1*(time.timezone/3600)+time.daylight
+
+dt_begin = datetime.datetime.now() - datetime.timedelta(days=8)
+dt_begin = datetime.datetime(dt_begin.year, dt_begin.month, dt_begin.day, 0, 0, 0)
+from_ts = int(time.mktime(dt_begin.timetuple()))
+to_ts = from_ts+7*24*60*60-1
+
+page = 1
+while True:
+    rsp = client.get_stats(YourMetricID,  from_ts,  to_ts, 
+                           base=60, 
+                           tz=timezone, 
+                           #time_format='%Y/%m/%d', 
+                           #limit=7,   # results limit, 
+                           page=page     # start from page number
+                           )
+    if rsp.status_code == 200:
+        js_rsp = rsp.json()
+        
+        # WORK WITH STATS DATA
+        print (len(js_rsp['items']))
+        if js_rsp['items']:
+            print (js_rsp['items'][0], js_rsp['items'][-1])
+
+        if not js_rsp['next_page']:
+            break
+        page = js_rsp['next_page']
+    else:
+        print (rsp.status_code)
+        print (rsp.content)
+        break
+
+```
 
 
 ####  RESPONSES to calls with Flow Metrics Statistics client methods
@@ -140,12 +208,15 @@ else:
     {"status": "bad_request", "msg": MESSAGE}
     
 + error-codes and messages:
-  + 0: 'param_empty',
-  + 1: 'list_empty',
-  + 2: 'csv_data_empty',
-  + 3: 'bad_csv_header',
-  + 4: 'bad_csv_row',
-  + 5: 'flow_id_is_required',
+  + 0: 'param_empty'
+  + 1: 'list_empty'
+  + 2: 'csv_data_empty'
+  + 3: 'bad_csv_header'
+  + 4: 'bad_csv_row'
+  + 5: 'bad_definition_type'
+  + 6: 'bad_timestamps'
+  + 7: 'bad_kwarg_value'
+  + 8: 'bad_time_format'
         
 ##### API responds with a HTTP status-code and with application/json status data for request made to the server
 
@@ -160,6 +231,11 @@ else:
   + bad_csv_header - wrong csv data header
   + item_missing - found zero items
   + missing_param: +field - item is missing a parameter
+  + bad_definition_type: deifition type requested is not available
+  + bad_mid_param: MetricId is missing in a request
+  + bad_timestamps: timestamps are not number or from is above to
+  + bad_time_format: requested time-format is not optional
+  + bad_param: either tz/base/limit/page is not a number
 
 ###### Bad API auth request, Response syntrax:
 
@@ -167,28 +243,36 @@ else:
      {"status": "unauthorized", "msg": MESSAGE}
 
 + messages and description:
-  + ip_blocked - ip address is blocked, open a ticket
-  + encryption_mismatch - digest/nonce mismatch
+  + ip_blocked - ip address is blocked, open a support ticket
   + api_access - missing access parameters
   + flow_acc_expired - Flow Metrics Statistics account has expired
+  + encryption_mismatch - digest/nonce mismatch
 
-###### Succesfull API request, Response syntrax:
+###### Bad API auth request, Response syntrax:
+
+     status-code: 404
+     {"status": "unauthorized", "msg": MESSAGE}
+
++ messages and description:
+  + no_method - bad url path
+ 
+###### Succesfull API request for push data, Response syntrax:
 
     status-code: 200
     {'status': 'OK', 'succeed': Number_Of_Items}
         
-###### Partially Succesfull API request, Response syntrax:
+###### Partially Succesfull API request for push data, Response syntrax:
 
     status-code: 200
     {'status': 'SOME_ERRORS', 'succeed': Number_Of_Items, 'failed': Number_Of_Items, 'errors': [Errors_and_Corresponding_Items]}
    
-###### Failed API request, Response syntrax:
+###### Failed API request for push data, Response syntrax:
 
     status-code: 200
     {'status': 'BAD', 'failed': Number_Of_Items, 'errors': [Errors_and_Corresponding_Items]}
     
     
-##### Errors and Corresponding Items
+##### Errors and Corresponding Items for push data list of errors
 respond's 'errors' key, a list of items with the error and the corresponding item
 
     [[error, mid, dt, v],]
