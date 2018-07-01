@@ -40,34 +40,20 @@ client = FmsClient('YourFlowID',
                    # cipher='AES',
                    keep_alive=True)
 ```
-            Parameters
-            ----------
-            fid : str
-                Your FlowID
++ Parameters
+  + fid: str, Your FlowID
 
-            Keyword Args
-            ----------
-            pass_phrase : str
-                Your API pass-phrase,
-                optional depends on Flow configurations and not required with allowed IP address are set
-            https : bool
-                Whether to use https,
-                default True
-            cipher : str
-                Authentication Cipher AES(the only available for now),
-                optional depends on Flow configurations
-            keep_alive : bool
-                Whether to keep session alive,
-                default False
-            json : bool
-                Whether to use only JSON Content-Type,
-                default False
-            requests_args : dict
-                Passed kwargs to 'requests' library
-
-            Returns
-            -------
-            FlowMetricsStatisticsClient instance
++ Keyword Args
+  +  pass_phrase : str,    Your API pass-phrase,  optional depends on Flow configurations and not required with allowed IP address are set
+  +  https : bool,          Whether to use https, default True
+  +  cipher : str,          Authentication Cipher AES(the only available for now), optional depends on Flow configurations
+  +  keep_alive : bool,     Whether to keep session alive, default False
+  +  json : bool,           Whether to use only JSON Content-Type, default False
+  +  requests_args : dict,  Passed kwargs to 'requests' library
+  
++ Returns
+  + FlowMetricsStatisticsClient instance
+        
 For a not based on libthither, you can check-on [api-without-pkg] guide.
 
 ### PUSHING/POSTING FLOW STATISTICS DATA
@@ -119,8 +105,8 @@ client.push_csv_data("mid,dt,v\n"+"MetricId,DateAndTime,Value")
 ```python
 client.get_definitions(DEFINITION_TYPE, **kwargs)
 ```
-+ Arguments
-  + DEFINITION_TYPE: str, Type of Definition units/sections/metrics , nothing or empty string for all
++ Parameters
+  + DEFINITION_TYPE: str, difinition type one of units/sections/metrics, nothing or empty string for all
 
 + Keyword Args
   +  section : str,        Only on this section level, apply only to sections and metrics types
