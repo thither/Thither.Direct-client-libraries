@@ -195,7 +195,7 @@ for metric_id in list(metrics.keys()):
                                base=1440,    # time frame base - minutes, groups lower metric base to this base
                                tz=timezone,  # timezone
                                time_format='%Y/%m/%d',  # default '%Y/%m/%d %H:%M' decreased with higher base
-                               limit=2013,   # results limit, 0:no-limit max:1,000,000
+                               limit=7,   # results limit, 0:no-limit max:1,000,000
                                page=page     # start from page number
                                )
 
