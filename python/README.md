@@ -132,14 +132,14 @@ else:
 ```
 ##### GETTING STATISTICS DATA
 ```python
-client.get_stats(metric_id,    # Your Metric ID
-                 from_ts,      # from timestamp
-                 to_ts,        # to timestamp
-                 base=1440,    # time frame base - minutes, groups lower metric base to this base
-                 tz=timezone,  # timezone
-                 time_format='%Y/%m/%d',  # default '%Y/%m/%d %H:%M' decreased with higher base
-                 limit=7,      # results limit, 0:no-limit max:1,000,000
-                 page=1        # start from page number
+client.get_stats(metric_id,
+                 from_ts,
+                 to_ts,
+                 base=1440,
+                 tz=timezone,
+                 time_format='%Y/%m/%d',
+                 limit=7,
+                 page=1
                  )
 ```
 + Parameters
@@ -149,7 +149,7 @@ client.get_stats(metric_id,    # Your Metric ID
 
 + Keyword Args
   +  base : int,        time frame base - minutes, lower metric base data will be grouped to this base 
-  +  tz : int,          hours, positive or negative relatively to GMT-0
+  +  tz : int,          minutes, positive or negative relatively to GMT-0
   +  time_format : str, Group items on this time format, default '%Y/%m/%d %H:%M' decreased for higher base
   +  limit : int,       get only this number of items, 0:no-limit max:1,000,000
   +  page : int,        get items from this page
@@ -165,7 +165,7 @@ client.get_stats(metric_id,    # Your Metric ID
 usage example, getting previous 7 days of MetricID data by one-hour base items
 ```python
 
-timezone = -1*(time.timezone/3600)+time.daylight
+timezone = int(-1*(time.timezone/60)+time.daylight*60)
 
 dt_begin = datetime.datetime.now() - datetime.timedelta(days=8)
 dt_begin = datetime.datetime(dt_begin.year, dt_begin.month, dt_begin.day, 0, 0, 0)
@@ -179,7 +179,7 @@ while True:
                            tz=timezone, 
                            #time_format='%Y/%m/%d', 
                            #limit=7,   # results limit, 
-                           page=page     # start from page number
+                           page=page   # start from page number
                            )
     if rsp.status_code == 200:
         js_rsp = rsp.json()
