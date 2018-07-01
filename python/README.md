@@ -19,6 +19,11 @@
 ## USING THE LIBRARY
 + The APIs are:
   + Flow Metrics Statistics Client
+    + push_single
+    + push_list
+    + push_csv_data
+    + get_definitions
+    + get_stats
   + (more to come)
 + Utils: 
   + (still to come)
@@ -65,6 +70,8 @@ client = FmsClient('YourFlowID',
             FlowMetricsStatisticsClient instance
 For a not based on libthither, you can check-on [api-without-pkg] guide.
 
+### PUSHING/POSTING FLOW STATISTICS DATA
+
 #### A FLOW METRICS STATS ITEM
 Depends on the method used to push the item, while the item definition format remain the same.
 + MetricId: It is a Metric ID, a user has created on Thither.Direct for a given FlowID
@@ -105,6 +112,38 @@ client.push_csv_data("mid,dt,v\n"+"MetricId,DateAndTime,Value")
 + Returns
   + 'requests' lib response
   + or an rsp object with status_code and content {'status': 'bad_request', 'error': desc}
+
+### GETTING FLOW STATISTICS DATA
+
+##### GETTING DEFINITIONS DATA - all/units/sections/metrics
+```python
+client.get_definitions(DEFINITION_TYPE, **kwargs)
+```
++ Arguments
+  + DEFINITION_TYPE: str, Type of Definition units/sections/metrics , nothing or empty string for all
+
++ Keyword Args
+  +  section : str,        Only on this section level, apply only to sections and metrics types
+  +  unit : str,           Only metrics with this Unit ID
+  +  operation : str,      Only metrics that timebase join operation is sum/avg
+  +  timebase : str/int,   Only metrics that with this timebase(minutes)
+  
++ Returns
+  + 'requests' lib response
+  + with JSON content of a dict{DEFINITION_TYPE: {TYPE_ID: {INFO_NAME: VALUE}}
+  + or an rsp object with status_code and content {'status': 'bad_request', 'error': desc}
+  
+usage example:
+```python
+rsp = client.get_definitions()
+if rsp.status_code == 200:
+    js_rsp = rsp.json()
+    for typ in ['units', 'sections', 'metrics']:
+        print (js_rsp[typ])
+else:
+    print (rsp.status_code)
+    print (rsp.content)
+```
 
 
 ####  RESPONSES to calls with Flow Metrics Statistics client methods
