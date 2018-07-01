@@ -54,7 +54,7 @@ client = FmsClient('YourFlowID',
 + Returns
   + FlowMetricsStatisticsClient instance
         
-For a not based on libthither, you can check-on (api-without-pkg)[api-without-pkg] guide.
+For a not based on libthither, you can check-on (api-without-pkg)[./api-without-pkg/] guide.
 
 ### PUSHING/POSTING FLOW STATISTICS DATA
 
@@ -256,23 +256,23 @@ while True:
 + messages and description:
   + no_method - bad url path
  
-###### Succesfull API request for push data, Response syntrax:
+###### Succesfull API request, Response syntrax:
 
     status-code: 200
     {'status': 'OK', 'succeed': Number_Of_Items}
         
-###### Partially Succesfull API request for push data, Response syntrax:
+###### Partially Succesfull API request, Response syntrax:
 
     status-code: 200
     {'status': 'SOME_ERRORS', 'succeed': Number_Of_Items, 'failed': Number_Of_Items, 'errors': [Errors_and_Corresponding_Items]}
    
-###### Failed API request for push data, Response syntrax:
+###### Failed API request, Response syntrax:
 
     status-code: 200
     {'status': 'BAD', 'failed': Number_Of_Items, 'errors': [Errors_and_Corresponding_Items]}
     
     
-##### Errors and Corresponding Items for push data list of errors
+##### Errors and Corresponding Items
 respond's 'errors' key, a list of items with the error and the corresponding item
 
     [[error, mid, dt, v],]
