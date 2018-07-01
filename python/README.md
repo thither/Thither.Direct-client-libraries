@@ -130,7 +130,7 @@ else:
     print (rsp.status_code)
     print (rsp.content)
 ```
-##### GETTING STATISTICS DATA - all/units/sections/metrics
+##### GETTING STATISTICS DATA
 ```python
 client.get_stats(metric_id,    # Your Metric ID
                  from_ts,      # from timestamp
@@ -162,7 +162,7 @@ client.get_stats(metric_id,    # Your Metric ID
              }
   + or an rsp object with status_code and content {'status': 'bad_request', 'error': desc}
   
-usage example, getting previous 7 days of MetricID data by one-hour items
+usage example, getting previous 7 days of MetricID data by one-hour base items
 ```python
 
 timezone = -1*(time.timezone/3600)+time.daylight
@@ -187,8 +187,10 @@ while True:
         # WORK WITH STATS DATA
         print (len(js_rsp['items']))
         if js_rsp['items']:
-            print (js_rsp['items'][0], js_rsp['items'][-1])
-
+            print (js_rsp['items'][0], js_rsp['items'][-1])  # newest item, oldest item
+            date_time = js_rsp['items'][0][0]
+            value = js_rsp['items'][0][1]
+            
         if not js_rsp['next_page']:
             break
         page = js_rsp['next_page']
