@@ -288,7 +288,7 @@ respond's 'errors' key, a list of items with the error and the corresponding ite
 
 
 #### API EXAMPLES - Flow Metrics Statistics Client
-Python libthither [examples-api-fms-client.py](examples-api-fms-client.py)
+Python libthither [examples-api-fms-client.py](examples-api-fms-client.py) and [test-api-fms-client.py](test-api-fms-client.py)
 
 
 
