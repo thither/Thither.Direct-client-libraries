@@ -61,7 +61,7 @@ For a not based on libthither, you can check-on (api-without-pkg)[./api-without-
 #### A FLOW METRICS STATS ITEM
 Depends on the method used to push the item, while the item definition format remain the same.
 + MetricId: It is a Metric ID, a user has created on Thither.Direct for a given FlowID
-+ DateTime: Format '%Y-%m-%d %H:%M:%S' unless otherwise specified on the metric configurations
++ DateTime: Unix timestamp str/int or Format '%Y-%m-%d %H:%M:%S' unless otherwise specified on the metric configurations
 + Value:    String/Integer - Positive, Negative or =Equal, It is the value tracked on the specific time for a metric
 
 
@@ -71,7 +71,7 @@ client.push_single(mid, dt, v)
 ```
 + Parameters
   + mid: str, MetricId
-  + dt: str,  DateTime
+  + dt: str/int,  DateTime or Unix Timestamp
   + v: str/int,   Value
 + Returns
   + 'requests' lib response
