@@ -10,7 +10,7 @@ dt_now = datetime.datetime.now()
 
 
 # Initiate FmsClient
-client = FmsClient('YourMetricID',
+client = FmsClient('YourFlowID',
                    pass_phrase='YourPassPhrase',
                    cipher='AES',
                    keep_alive=True)
