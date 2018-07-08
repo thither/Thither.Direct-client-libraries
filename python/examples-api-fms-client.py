@@ -10,7 +10,7 @@ dt_now = datetime.datetime.now()
 
 
 # Initiate FmsClient
-client = FmsClient('YourFlowID',
+client = FmsClient('YourMetricID',
                    pass_phrase='YourPassPhrase',
                    cipher='AES',
                    keep_alive=True)
@@ -27,7 +27,7 @@ print ('EXAMPLE FOR PUSHING SINGLE ITEM - START')
 
 for c in range(1, 11):
     ts_start = time.time()
-    rsp = client.push_single('2', (dt_now - datetime.timedelta(weeks=0)).strftime('%Y-%m-%d %H:%M:%S'), c)
+    rsp = client.push_single('2', int(time.time()), c)
     print (c, time.time()-ts_start)
     print (rsp.status_code)
     print (rsp.content)
@@ -43,7 +43,7 @@ items = [[mid, (dt_now - datetime.timedelta(days=d, minutes=m, seconds=s)).strft
          for mid in range(2, 7)            # 5 metric IDs range
          for s in range(0, 60, 30)         # seconds in minute / twice a minute
          for m in range(0, 3600)           # minutes in 1 day
-         for d in range(0, 28)             # days
+         for d in range(0, 1)              # days
          for c in range(1000, 3000, 1000)  # 2x values once at 0sec second at 30sec
          ]
 print ('Num Items:' + str(len(items)))  # num_items=days*72000 () , value(5 minute time frame = 5x2x(1000+2000))
@@ -192,17 +192,17 @@ for metric_id in list(metrics.keys()):
         rsp = client.get_stats(metric_id,    # Your Metric ID
                                from_ts,      # from timestamp
                                to_ts,        # to timestamp
-                               base=1440,    # time frame base - minutes, groups lower metric base to this base
+                               base=5,      # time frame base - minutes, groups lower metric base to this base
                                tz=timezone,  # timezone GMT +/- minutes
-                               time_format='%Y/%m/%d',  # default '%Y/%m/%d %H:%M' decreased with higher base
-                               limit=7,   # results limit, 0:no-limit max:1,000,000
+                               time_format='%Y/%m/%d %H:%M',  # default '%Y/%m/%d %H:%M' decreased with higher base
+                               limit=1000,   # results limit, 0:no-limit max:1,000,000
                                page=page     # start from page number
                                )
 
         if rsp.status_code == 200:
             js_rsp = rsp.json()
             # WORK WITH STATS DATA
-            print (len(js_rsp['items']))
+            print (page, len(js_rsp['items']))
             if js_rsp['items']:
                 print (js_rsp['items'][0], js_rsp['items'][-1])
 
