@@ -35,7 +35,7 @@ except:
 class FlowMetricsStatisticsClient(object):
     __slots__ = ['u_push', 'u_get', 'fid', 'ps', 'cph', 'json', 's', 'ka', 'requests_args']
 
-    root_url = '://thither.direct/api/fms/'
+    root_url = '://thither.link/api/fms/'
     except_errs = {
         'AES': 'requested cipher AES, pkg Cryptodome is not installed!',
         'AES_ps': 'AES cipher require key(pass-phrase) 16, 24 or 32 in chars length!',
@@ -162,7 +162,9 @@ class FlowMetricsStatisticsClient(object):
             ----------
             mid : str
                 Your MetricID
-            dt : str
+            dt : str/int
+                Unix Timestamp
+                or
                 Date and time in format '%Y-%m-%d %H:%M:%S' unless otherwise specified on the metric configurations
             v : str/int
                 value positive, negative or =equal
