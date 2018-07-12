@@ -213,8 +213,6 @@ while True:
   + 0: 'param_empty'
   + 1: 'list_empty'
   + 2: 'csv_data_empty'
-  + 3: 'bad_csv_header'
-  + 4: 'bad_csv_row'
   + 5: 'bad_definition_type'
   + 6: 'bad_timestamps'
   + 7: 'bad_kwarg_value'
