@@ -1,13 +1,9 @@
 # author Kashirin Alex
 
-import sys
-import csv
 import base64
 import datetime
-if sys.version_info.major == 3:
-    from io import StringIO as NormStringIO
-else:
-    from io import BytesIO as NormStringIO
+import time
+import calendar
 
 try:
     import requests
@@ -24,11 +20,7 @@ try:
     import zlib
     compressor = ('zlib', zlib.compress)
 except:
-    try:
-        import brotli
-        compressor = ('br', brotli.compress)
-    except:
-        compressor = None
+    compressor = None
 #
 
 
@@ -116,34 +108,34 @@ class FlowMetricsStatisticsClient(object):
         self.requests_args = kwargs.get('requests_args', None)
         #
 
-    def set_push_params(self, params, first_item=None):
+    @staticmethod
+    def utc_seconds():
+        return int(calendar.timegm(time.gmtime(time.time())))
+        #
+
+    def set_params(self, params):
         """
             Set the corresponding parameters for a request.
 
             The function set the predefined parameters in the instance
-            and if cipher is used calculates a nonce and a digest for authenticating
+            and if cipher is used computes a token for authenticating
 
             Parameters
             ----------
             params : dict
                 a reference to the dict to work with
-            first_item : list
-                a sample of the 1st item whether in csv/list or a single item
-                in the follow ordered mid, dt, v
             Returns
             -------
             None
         """
         params['fid'] = self.fid  # Flow Metrics Statistics ID
-        if not self.ps:
+        if not self.cph:
+            params['ps'] = self.ps
             return
         if self.cph == "AES":
-            cipher = AES.new(b''+self.ps.encode("utf-8"), AES.MODE_EAX)
-            cipher.encrypt((','.join(str(v) for v in first_item)).encode("utf-8"))
-            params['digest'] = base64.b64encode(cipher.digest())
-            params['nonce'] = base64.b64encode(cipher.nonce)
-        else:
-            params['ps'] = self.ps
+            cipher = AES.new(b'' + self.ps.encode("utf-8"), AES.MODE_EAX)
+            crp, tag = cipher.encrypt_and_digest((str(self.utc_seconds())+'|'+self.ps).encode("utf-8"))
+            params['token'] = '|'.join([base64.b64encode(cipher.nonce), base64.b64encode(tag), base64.b64encode(crp)])
         #
 
     @staticmethod
@@ -182,7 +174,7 @@ class FlowMetricsStatisticsClient(object):
                 return BadReq(0)
 
         params = {'mid': mid, 'dt': dt, 'v': v}
-        self.set_push_params(params, [mid, dt, v])
+        self.set_params(params)
         if self.json:
             return self.post(json=params)
         else:
@@ -207,7 +199,7 @@ class FlowMetricsStatisticsClient(object):
             return BadReq(1)
 
         params = {}
-        self.set_push_params(params, items[0])
+        self.set_params(params)
 
         if self.json:
             params['items'] = items
@@ -237,37 +229,8 @@ class FlowMetricsStatisticsClient(object):
         if not csv_data:
             return BadReq(2)
 
-        item = []
-        if self.cph:  # get 1st item for auth-digest
-            csv_file = NormStringIO(csv_data)
-            dialect = csv.Sniffer().sniff(csv_file.read(2048))
-            csv_file.seek(0)
-            reader = csv.reader(csv_file, dialect)
-            fc = {}
-            h = False
-            for row in reader:
-                if not h:
-                    h = True
-                    for i, c in enumerate(row):
-                        if c in ['mid', 'dt', 'v']:
-                            fc[c] = i
-                    if len(fc) != 3:
-                        return BadReq(3)
-                    continue
-                if not row:
-                    return BadReq(4)
-                l_row = len(row)
-                for f in ['mid', 'dt', 'v']:
-                    if l_row <= fc[f]:
-                        continue
-                    item.append(row[fc[f]])
-                break
-            csv_file.close()
-            if len(item) < 3:
-                return BadReq(4)
-
         params = {}
-        self.set_push_params(params, item)
+        self.set_params(params)
         if self.json:
             params['csv'] = csv_data
             return self.post(json=params)
@@ -317,6 +280,7 @@ class FlowMetricsStatisticsClient(object):
             return BadReq(5)
 
         params = {}
+        self.set_params(params)
         if typ == 'units':
             pass
         else:
@@ -329,7 +293,6 @@ class FlowMetricsStatisticsClient(object):
                     if not v:
                         continue
                     params[k] = v
-        self.set_get_params(params)
         return self.get(self.u_get+"definitions/"+typ+"/", params=params)
         #
 
@@ -373,6 +336,7 @@ class FlowMetricsStatisticsClient(object):
             return BadReq(0)
 
         params = {'mid': mid, 'from': from_ts, 'to': to_ts}
+        self.set_params(params)
 
         v = kwargs.pop('time_format', None)
         if v is not None:
@@ -389,35 +353,7 @@ class FlowMetricsStatisticsClient(object):
             if not isinstance(v, int):
                 return BadReq(7)
             params[k] = v
-        self.set_get_params(params)
         return self.get(self.u_get+"stats/", params=params)
-        #
-
-    def set_get_params(self, params):
-        """
-            Set the corresponding parameters for a request.
-
-            The function set the predefined parameters in the instance
-            and if cipher is used calculates a nonce and a digest for authenticating
-
-            Parameters
-            ----------
-            params : dict
-                a reference to the dict to work with
-            Returns
-            -------
-            None
-        """
-        params['fid'] = self.fid  # Flow Metrics Statistics ID
-        if not self.ps:
-            return
-        if self.cph == "AES":
-            cipher = AES.new(b''+self.ps.encode("utf-8"), AES.MODE_EAX)
-            cipher.encrypt((','.join(str(k)+'-'+str(params[k]) for k in sorted(list(params.keys())))).encode("utf-8"))
-            params['digest'] = base64.b64encode(cipher.digest())
-            params['nonce'] = base64.b64encode(cipher.nonce)
-        else:
-            params['ps'] = self.ps
         #
 
     def get(self, u, **kwargs):
@@ -442,8 +378,6 @@ class BadReq(object):
         0: 'param_empty',
         1: 'list_empty',
         2: 'csv_data_empty',
-        3: 'bad_csv_header',
-        4: 'bad_csv_row',
         5: 'bad_definition_type',
         6: 'bad_timestamps',
         7: 'bad_kwarg_value',

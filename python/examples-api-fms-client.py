@@ -1,4 +1,5 @@
 # -- coding: utf-8 --
+# author Kashirin Alex
 
 # # #  FLOW METRICS STATISTICS - API THITHER.DIRECT # # #
 
@@ -6,7 +7,7 @@ from libthither.api.fms import FlowMetricsStatisticsClient as FmsClient
 
 import time
 import datetime
-dt_now = datetime.datetime.now()
+dt_now = datetime.datetime.utcnow()
 
 
 # Initiate FmsClient
@@ -27,7 +28,7 @@ print ('EXAMPLE FOR PUSHING SINGLE ITEM - START')
 
 for c in range(1, 11):
     ts_start = time.time()
-    rsp = client.push_single('2', int(time.time()), c)
+    rsp = client.push_single('2', client.utc_seconds(), c)
     print (c, time.time()-ts_start)
     print (rsp.status_code)
     print (rsp.content)

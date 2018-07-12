@@ -8,7 +8,7 @@ with open(README_RST) as readme:
 
 setup(
     name='libthither',
-    version='0.10.0',
+    version='0.10.2',
     description='Python Library for Thither.Direct',
     long_description=long_description,
 
@@ -19,6 +19,20 @@ setup(
               'libthither.api'],
 
     maintainer='Kashirin Alex',
-	maintainer_email='kashirin.alex@gmail.com'
-)
+    maintainer_email='kashirin.alex@gmail.com',
 
+    classifiers=(
+        "Programming Language :: Python",
+        "Development Status :: 5 - Production/Stable",
+        "Operating System :: OS Independent",
+        "Intended Audience :: Manufacturing",
+        "Intended Audience :: Science/Research",
+        "Intended Audience :: Information Technology",
+        "Intended Audience :: Customer Service",
+        "Topic :: Scientific/Engineering :: Information Analysis",
+        "Topic :: Software Development :: Libraries :: Python Modules",
+        "Topic :: Internet :: Log Analysis",
+        "License :: OSI Approved :: MIT License",
+    ),
+    platforms=['any'],
+)
