@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>thither.direct</groupId>
+    <artifactId>lib</artifactId>
+	
+    <version>0.10.3</version>
+    <name>Thither.Direct</name>
+    <description>Thither.Direct Java</description>
+	
+	<packaging>pom</packaging>
+  
+    <organization>
+        <name>Thither.Direct</name>
+        <url>https://www.Thither.Direct</url>
+    </organization>
+	
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    
+    <maven.compiler.source>1.9</maven.compiler.source>
+    <maven.compiler.target>1.9</maven.compiler.target>
+  </properties>
+
+    <modules>
+       <module>libthither</module>
+    </modules>
+	
+</project>
