@@ -105,6 +105,10 @@ public class FmsClient {
     }
 
     public FmsRspSetStats push_single(FmsSetStatsItem item){
+        if(item == null || item.mid == null || item.dt == null || item.v == null)
+            return new FmsRspSetStats(1, "bad_request",
+                    "item is not fully initialized");
+
         FormBody.Builder b = new FormBody.Builder()
                 .add("fid", fm_id)
                 .add("mid", item.mid)
@@ -229,7 +233,7 @@ public class FmsClient {
             return new FmsRspGetDefinitions(1, "bad_request", e.getMessage());
         }
 
-        Request.Builder req_b = new Request.Builder().url(u_get+"definitions/"+typ.name().toLowerCase()+"s/");
+        Request.Builder req_b = new Request.Builder().url(u_get+"definitions/"+typ.name().toLowerCase()+"/");
         if(ka) req_b.addHeader("connection", "keep-alive");
         req_b.addHeader("accept-encoding", "deflate");
 
