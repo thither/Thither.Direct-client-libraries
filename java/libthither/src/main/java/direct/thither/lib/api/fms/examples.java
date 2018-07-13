@@ -13,7 +13,7 @@ public class examples {
 
     public static void main(String[] args) {
 
-        // INITIALIZE THE FLOW METRICS STATSTICS CLIENT
+        // INITIALIZE THE FLOW METRICS STATISTICS CLIENT
         client = new FmsClient("YourFlowId");
         client.set_keep_alive(true);
         client.set_pass_phrase("YourPassPhrase");

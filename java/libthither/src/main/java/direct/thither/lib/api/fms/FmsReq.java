@@ -47,12 +47,6 @@ class FmsSetStatsItem extends FmsReq{
         dt = date_time;
         v = value;
     }
-    public FmsSetStatsItem(String error, String metric_id, String date_time, String value){
-        mid = metric_id;
-        dt = date_time;
-        v = value;
-        e = error;
-    }
     public FmsSetStatsItem(String metric_id, String date_time, Integer value){
         mid = metric_id;
         dt = date_time;
@@ -67,6 +61,13 @@ class FmsSetStatsItem extends FmsReq{
         mid = metric_id;
         dt = normalize_ts(date_time);
         v = value.toString();
+    }
+
+    public FmsSetStatsItem(String error, String metric_id, String date_time, String value){
+        mid = metric_id;
+        dt = date_time;
+        v = value;
+        e = error;
     }
 
     public String to_csv_line(){

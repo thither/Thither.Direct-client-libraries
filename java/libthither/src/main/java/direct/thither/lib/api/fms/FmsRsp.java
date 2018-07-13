@@ -88,7 +88,7 @@ class FmsRspGetStats  extends FmsRsp {
 }
 
 
-enum FmsDefinitionType{ALL, UNIT, SECTION, METRIC}
+enum FmsDefinitionType{ALL, UNITS, SECTIONS, METRICS}
 
 
 class FmsDefinition{
@@ -127,17 +127,17 @@ class FmsDefinition{
     public String toString(){
         String s = getClass().getSimpleName();
         switch (type){
-            case UNIT:
+            case UNITS:
                 s+=String.format(
                         "(%s=%s, %s=%s, %s=%s, %s=%s)",
                         "Type", type.name(), "id", id, "name", name, "desc", desc);
                 break;
-            case SECTION:
+            case SECTIONS:
                 s+=String.format(
                         "(%s=%s, %s=%s, %s=%s, %s=%s)",
                         "Type", type.name(), "id", id, "name", name, "desc", desc);
                 break;
-            case METRIC:
+            case METRICS:
                 s+=String.format(
                         "(%s=%s, %s=%s, %s=%s, %s=%s, %s=%s, %s=%s, %s=%s, %s=%d, %s=%d)",
                         "Type", type.name(), "id", id, "name", name, "desc", desc,
@@ -170,7 +170,7 @@ class FmsRspGetDefinitions extends FmsRsp {
                 units = new ConcurrentHashMap<>();
             for(String k :items.keySet()) {
                 item = items.getJSONObject(k);
-                units.put(k, new FmsDefinition(FmsDefinitionType.UNIT, k, item.getString("name")));
+                units.put(k, new FmsDefinition(FmsDefinitionType.UNITS, k, item.getString("name")));
             }
         }
         if(js_rsp.has("sections")){
@@ -179,7 +179,7 @@ class FmsRspGetDefinitions extends FmsRsp {
                 sections = new ConcurrentHashMap<>();
             for(String k :items.keySet()) {
                 item = items.getJSONObject(k);
-                sections.put(k, new FmsDefinition(FmsDefinitionType.SECTION, k, item.getString("name"),
+                sections.put(k, new FmsDefinition(FmsDefinitionType.SECTIONS, k, item.getString("name"),
                         item.optString("desc", null)));
             }
         }
@@ -189,7 +189,7 @@ class FmsRspGetDefinitions extends FmsRsp {
                 metrics = new ConcurrentHashMap<>();
             for(String k :items.keySet()) {
                 item = items.getJSONObject(k);
-                metrics.put(k, new FmsDefinition(FmsDefinitionType.METRIC, k, item.getString("name"),
+                metrics.put(k, new FmsDefinition(FmsDefinitionType.METRICS, k, item.getString("name"),
                         item.optString("desc", null),
                         item.optString("section", null),
                         item.optString("unit", null),
