@@ -9,21 +9,24 @@ import java.io.*;
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.zip.*;
 
 import okhttp3.*;
 
 import org.bouncycastle.crypto.engines.AESEngine;
 import org.bouncycastle.crypto.modes.EAXBlockCipher;
-import org.bouncycastle.crypto.params.AEADParameters;
 import org.bouncycastle.crypto.params.KeyParameter;
+import org.bouncycastle.crypto.params.ParametersWithIV;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 
 public class FmsClient {
-    private static String root_url = "://thither.direct/api/fms/";
+    private static String root_url = "://thither.direct/api/fms-";
+    private String api_version = "v201807";
     private OkHttpClient _http_client = null;
+    private long time_out = 1800;
 
     private String fm_id;
     private String ps;
@@ -43,9 +46,13 @@ public class FmsClient {
     public void set_pass_phrase(String phrase){
         ps = phrase;
     }
+    public void set_version(String version){
+        api_version = version;
+        set_https(https);
+    }
     public void set_https(boolean secure){
         https = secure;
-        String u = "http"+(secure?"s":"")+root_url;
+        String u = "http"+(secure?"s":"")+root_url+api_version+"/";
         u_push = u+"post/";
         u_get = u+"get/";
     }
@@ -61,17 +68,25 @@ public class FmsClient {
     private void set_http_client(){
         if(_http_client != null) return;
         List<Protocol> protocols = new ArrayList<>();
+        protocols.add(Protocol.HTTP_1_1);
         if(https)
             protocols.add(Protocol.HTTP_2);
-        protocols.add(Protocol.HTTP_1_1);
-        _http_client = new OkHttpClient.Builder().protocols(protocols).build();
+        _http_client = new OkHttpClient.Builder().protocols(protocols)
+                .connectTimeout(time_out, TimeUnit.SECONDS)
+                .writeTimeout(time_out, TimeUnit.SECONDS)
+                .readTimeout(time_out, TimeUnit.SECONDS).build();
+    }
+    public OkHttpClient get_http_client(){
+        if(_http_client == null) set_http_client();
+        return _http_client;
     }
     private String get_aes_token() throws Exception {
         EAXBlockCipher c = new EAXBlockCipher(new AESEngine());
 
         byte[] nonce = new byte[cipher_nonce_len];
         new SecureRandom().nextBytes(nonce);
-        c.init(true, new AEADParameters(cipher_key, c.getBlockSize()*8, nonce,  new byte[0]));
+        c.init(true, new ParametersWithIV(cipher_key, nonce));
+        //c.init(true, new KeyParameter(cipher_key, c.getBlockSize()*8, nonce,  new byte[0]));
 
         byte[] d = (Instant.now().getEpochSecond()+"|"+ps).getBytes();
         byte[] crp = new byte[c.getOutputSize(d.length)];
@@ -91,7 +106,8 @@ public class FmsClient {
         System.out.println("nonce:       "+(new String(nonce)));
         System.out.println("nonce b64:   "+new String(Base64.getEncoder().encode(nonce)));
 
-        c.init(false, new AEADParameters(cipher_key, c.getBlockSize()*8, nonce, new byte[0]));
+        c.init(false, new ParametersWithIV(cipher_key, nonce));
+        //c.init(false, new AEADParameters(cipher_key, c.getBlockSize()*8, nonce, new byte[0]));
         byte[] datOut = new byte[c.getOutputSize(crp.length)];
         int resultLen = c.processBytes(crp, 0, crp.length, datOut, 0);
         c.doFinal(datOut, resultLen);
@@ -123,7 +139,7 @@ public class FmsClient {
                     b.add("ps", ps);
                     break;
             }
-            return post(b.build());
+            return post(u_push+"stats/item", b.build());
         }catch (Exception e){
             return new FmsRspSetStats(1, "bad_request", e.getMessage());
         }
@@ -155,15 +171,15 @@ public class FmsClient {
                     b.addFormDataPart("ps", ps);
                     break;
             }
-            return post(b.build());
+            return post(u_push+"stats/items_csv",b.build());
 
         }catch (Exception e){
             return new FmsRspSetStats(1, "bad_request", e.getMessage());
         }
     }
-    private FmsRspSetStats post(RequestBody req_body){
+    private FmsRspSetStats post(String url, RequestBody req_body){
 
-        Request.Builder req_b = new Request.Builder().url(u_push);
+        Request.Builder req_b = new Request.Builder().url(url);
         if(ka) req_b.addHeader("connection", "keep-alive");
         req_b.addHeader("accept-encoding", "deflate");
         Request req = req_b.post(req_body).build();

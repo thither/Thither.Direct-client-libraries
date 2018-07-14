@@ -8,7 +8,7 @@ with open(README_RST) as readme:
 
 setup(
     name='libthither',
-    version='0.10.2',
+    version='0.10.3',
     description='Python Library for Thither.Direct',
     long_description=long_description,
 

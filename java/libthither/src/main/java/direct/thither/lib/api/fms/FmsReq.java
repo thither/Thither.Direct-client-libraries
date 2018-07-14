@@ -29,7 +29,7 @@ class FmsSetStatsItem extends FmsReq{
         dt = date_time;
         v = value;
     }
-    public void set_details(String date_time, Integer value){
+    public void set_details(String date_time, Long value){
         dt = date_time;
         v = value.toString();
     }
@@ -37,7 +37,7 @@ class FmsSetStatsItem extends FmsReq{
         dt = normalize_ts(date_time);
         v = value;
     }
-    public void set_details(long date_time, Integer value){
+    public void set_details(long date_time, Long value){
         dt = normalize_ts(date_time);
         v = value.toString();
     }
@@ -47,7 +47,7 @@ class FmsSetStatsItem extends FmsReq{
         dt = date_time;
         v = value;
     }
-    public FmsSetStatsItem(String metric_id, String date_time, Integer value){
+    public FmsSetStatsItem(String metric_id, String date_time, Long value){
         mid = metric_id;
         dt = date_time;
         v = value.toString();
@@ -57,7 +57,7 @@ class FmsSetStatsItem extends FmsReq{
         dt = normalize_ts(date_time);
         v = value;
     }
-    public FmsSetStatsItem(String metric_id, long date_time, Integer value){
+    public FmsSetStatsItem(String metric_id, long date_time, Long value){
         mid = metric_id;
         dt = normalize_ts(date_time);
         v = value.toString();
@@ -91,8 +91,9 @@ class FmsGetStatsQuery extends FmsReq{
         to = to_ts.toString();
     }
     public void set_grouping(Integer minutes_base, Integer minutes_timezone, String time_format){
-        base = minutes_base.toString();
-        if(minutes_timezone != 0)
+        if(minutes_base != null)
+            base = minutes_base.toString();
+        if(minutes_timezone != null)
             tz = minutes_timezone.toString();
         tf = time_format;
     }
