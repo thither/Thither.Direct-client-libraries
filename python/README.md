@@ -2,7 +2,7 @@
 
 ## INSTALL
    
-    pip install https://github.com/kashirin-alex/Thither.Direct-client-libraries/archive/libthither-v0.10.0.tar.gz
+    pip install https://github.com/kashirin-alex/Thither.Direct-client-libraries/archive/libthither-v0.10.3.tar.gz
       or
     pip install libthither
       or 
