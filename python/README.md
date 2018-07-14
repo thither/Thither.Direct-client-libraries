@@ -10,10 +10,7 @@
     
 ##### DEPENDENCIES
 ###### required:
-     pip install requests pycryptodomex 
-###### optional:
-     pip install brotli
-     
+     pip install requests pycryptodomex
      
   
 ## USING THE LIBRARY
@@ -106,7 +103,7 @@ client.push_csv_data("mid,dt,v\n"+"MetricId,DateAndTime,Value")
 client.get_definitions(DEFINITION_TYPE, **kwargs)
 ```
 + Parameters
-  + DEFINITION_TYPE: str, difinition type one of units/sections/metrics, nothing or empty string for all
+  + DEFINITION_TYPE: str, definition type one of units/sections/metrics, nothing or empty string for all
 
 + Keyword Args
   +  section : str,        Only on this section level, apply only to sections and metrics types
@@ -204,7 +201,7 @@ while True:
 
 ####  RESPONSES to calls with Flow Metrics Statistics client methods
 
-###### Errors originated prior a request to the server, Bad API Request syntrax:
+###### Errors originated prior a request to the server, Bad API Request syntax:
 
     status-code: error-code
     {"status": "bad_request", "msg": MESSAGE}
@@ -220,18 +217,18 @@ while True:
         
 ##### API responds with a HTTP status-code and with application/json status data for request made to the server
 
-###### Bad API request, Response syntrax:
+###### Bad API request, Response syntax:
 
      status-code: 400
      {"status": "bad_request", "msg": MESSAGE}
 
 + messages and description:
   + access_detail - missing access parameters
-  + not_supported_compression - comperssion used is not supported
+  + not_supported_compression - compression used is not supported
   + bad_csv_header - wrong csv data header
   + item_missing - found zero items
   + missing_param: +field - item is missing a parameter
-  + bad_definition_type: deifition type requested is not available
+  + bad_definition_type: definition type requested is not available
   + bad_mid_param: MetricId is missing in a request
   + bad_timestamps: timestamps are not number or from is above to
   + bad_time_format: requested time-format is not optional
@@ -248,7 +245,7 @@ while True:
   + flow_acc_expired - Flow Metrics Statistics account has expired
   + encryption_mismatch - digest/nonce mismatch
 
-###### Bad API auth request, Response syntrax:
+###### Bad API auth request, Response syntax:
 
      status-code: 404
      {"status": "unauthorized", "msg": MESSAGE}
@@ -256,17 +253,17 @@ while True:
 + messages and description:
   + no_method - bad url path
  
-###### Succesfull API request, Response syntrax:
+###### Successful API request, Response syntax:
 
     status-code: 200
     {'status': 'OK', 'succeed': Number_Of_Items}
         
-###### Partially Succesfull API request, Response syntrax:
+###### Partially Successful API request, Response syntax:
 
     status-code: 200
     {'status': 'SOME_ERRORS', 'succeed': Number_Of_Items, 'failed': Number_Of_Items, 'errors': [Errors_and_Corresponding_Items]}
    
-###### Failed API request, Response syntrax:
+###### Failed API request, Response syntax:
 
     status-code: 200
     {'status': 'BAD', 'failed': Number_Of_Items, 'errors': [Errors_and_Corresponding_Items]}

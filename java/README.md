@@ -1,10 +1,23 @@
 # Thither.Direct - Java - Library
 
 ## INSTALL
-   
-    mvn
-      or
-    clone git
+###### BUILDING JAR 
+
+    git clone git://github.com/thither/Thither.Direct-client-libraries.git; 
+    cd Thither.Direct-client-libraries/java; 
+    mvn -f pom.xml -Dmaven.test.skip=true package;
+The command will create a library and a bundled library at ./target
+with files libthither-0.10.3-bundled.jar and libthither-0.10.3.jar
+
+running test and examples:
+* edit the examples.java and test.java with your FlowID configurations
+* run
+  + java -cp ./target/libthither-0.10.3-bundled.jar direct.thither.lib.api.fms.test
+  + java -cp ./target/libthither-0.10.3-bundled.jar direct.thither.lib.api.fms.examples
+
+###### READY JAR 
+    download https://github.com/thither/Thither.Direct-client-libraries/releases/download/libthither-v0.10.3/libthither-0.10.3.jar
+    soon at maven
     
 ##### DEPENDENCIES
 ###### required:
@@ -37,8 +50,12 @@ FmsClient client = new FmsClient("YourFlowId");
 client.set_keep_alive(true);
 client.set_pass_phrase("YourPassPhrase");
 //client.set_cipher(FmsClient.Ciphers.AES);
+//client.version("v201807");
 //client.set_https(false);
-
+```
+option to set the OkHttpClient instance configurations such as proxy or specific timeouts
+```java
+OkHttpClient http_client = client.get_http_client();
 ```
 
 ### PUSHING/POSTING FLOW STATISTICS DATA
@@ -49,17 +66,17 @@ It has the following over-loaders,
 for initializing in full:
 ```java
 FmsSetStatsItem(String metric_id, String date_time, String value);
-FmsSetStatsItem(String metric_id, String date_time, Integer value);
+FmsSetStatsItem(String metric_id, String date_time, Long value);
 FmsSetStatsItem(String metric_id, long date_time, String value);
-FmsSetStatsItem(String metric_id, long date_time, Integer value);
+FmsSetStatsItem(String metric_id, long date_time, Long value);
 ```
 for partial initialization:
 ```java
 FmsSetStatsItem item = new FmsSetStatsItem(String metric_id);
 item.set_details(String date_time, String value);
-item.set_details(String date_time, Integer value);
+item.set_details(String date_time, Long value);
 item.set_details(long date_time, String value);
-item.set_details(long date_time, Integer value);
+item.set_details(long date_time, Long value);
 ```
 for item with error initialization:
 ```java
@@ -176,14 +193,14 @@ The FmsRspGetStats object:
    * next_page: int,  next_page available or zero for none
    * items:     JSONArray, the items object in it's original http response object
 + The follow methods are available:
-   * Map.Entry<String, Integer> next(), get next item map <datetime, value>
+   * Map.Entry<String, Long> next(),    get next item map <datetime, value>
    * boolean has_next(),                whether there is a next item.
 
 
 usage example, printing out all stats of a MetricId in timestamp range
 ```java
         FmsRspGetStats stats;
-        Map.Entry<String, Integer> stats_item;
+        Map.Entry<String, Long> stats_item;
         FmsGetStatsQuery query = new FmsGetStatsQuery("YourMetricID", FROM_SECS_TS, TO_SECS_TS);
         query.set_limit(10000);
         do {
@@ -275,7 +292,11 @@ respond's 'errors' key, a list of items with the error and the corresponding ite
 
 
 #### API EXAMPLES - Flow Metrics Statistics Client
-Java libthither [examples.java](libthither/src/main/java/direct/thither/lib/api/fms/examples.java)
+Java libthither
+ [examples.java](libthither/src/main/java/direct/thither/lib/api/fms/examples.java) 
+ and 
+ [test.java](libthither/src/main/java/direct/thither/lib/api/fms/test.java)
+
 
 
 

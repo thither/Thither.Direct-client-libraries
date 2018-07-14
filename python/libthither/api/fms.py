@@ -2,6 +2,8 @@
 
 import base64
 import datetime
+import random
+import string
 import time
 import calendar
 
@@ -22,12 +24,15 @@ try:
 except:
     compressor = None
 #
+chars = string.ascii_letters+string.digits
+pads_len = 8
 
 
 class FlowMetricsStatisticsClient(object):
     __slots__ = ['u_push', 'u_get', 'fid', 'ps', 'cph', 'json', 's', 'ka', 'requests_args']
 
-    root_url = '://thither.link/api/fms/'
+    api_version = 'v201807'
+    root_url = '://thither.direct/api/fms-'
     except_errs = {
         'AES': 'requested cipher AES, pkg Cryptodome is not installed!',
         'AES_ps': 'AES cipher require key(pass-phrase) 16, 24 or 32 in chars length!',
@@ -61,6 +66,8 @@ class FlowMetricsStatisticsClient(object):
 
             Keyword Args
             ----------
+            version : str
+                applicable API version
             pass_phrase : str
                 Your API pass-phrase,
                 optional depends on Flow configurations
@@ -83,7 +90,7 @@ class FlowMetricsStatisticsClient(object):
             -------
             FlowMetricsStatisticsClient instance
         """
-        u = 'http'+('s' if kwargs.get('https', True) else '')+self.root_url
+        u = 'http'+('s' if kwargs.get('https', True) else '')+self.root_url+kwargs.get('version', self.api_version)
         self.u_push = u+"/post/"
         self.u_get = u+"/get/"
 
@@ -134,16 +141,20 @@ class FlowMetricsStatisticsClient(object):
             return
         if self.cph == "AES":
             cipher = AES.new(b'' + self.ps.encode("utf-8"), AES.MODE_EAX)
-            crp, tag = cipher.encrypt_and_digest((str(self.utc_seconds())+'|'+self.ps).encode("utf-8"))
+            crp, tag = cipher.encrypt_and_digest(
+                '|'.join([''.join(random.choice(chars) for _ in range(pads_len)),
+                          str(self.utc_seconds()),
+                          self.fid,
+                          str(pads_len),
+                          ''.join(random.choice(chars) for _ in range(pads_len))]
+                         ).encode("utf-8"))
             params['token'] = '|'.join([base64.b64encode(cipher.nonce), base64.b64encode(tag), base64.b64encode(crp)])
         #
 
     @staticmethod
     def set_compression(params, data):
         params['comp'] = compressor[0]
-        if compressor[0] in ['br', 'zlib']:
-            return compressor[1](data.encode("utf-8"))
-        return data
+        return compressor[1](data.encode("utf-8"))
         #
 
     def push_single(self, mid, dt, v):
@@ -176,9 +187,10 @@ class FlowMetricsStatisticsClient(object):
         params = {'mid': mid, 'dt': dt, 'v': v}
         self.set_params(params)
         if self.json:
-            return self.post(json=params)
+            return self.post(self.u_push+"stats/item", json=params)
         else:
-            return self.post(headers={'Content-Type': 'application/x-www-form-urlencoded'}, params=params)
+            return self.post(self.u_push+"stats/item",
+                             headers={'Content-Type': 'application/x-www-form-urlencoded'}, params=params)
         #
 
     def push_list(self, items):
@@ -203,13 +215,13 @@ class FlowMetricsStatisticsClient(object):
 
         if self.json:
             params['items'] = items
-            return self.post(json=params)
+            return self.post(self.u_push+"stats/items_json", json=params)
         else:
             # list converted to csv preferred for data-transfer
             csv_data = "\n".join(["mid,dt,v"] + [','.join([str(v) for v in item]) for item in items])
             if compressor is not None:
                 csv_data = self.set_compression(params, csv_data)
-            return self.post(params=params, files={'csv': csv_data})
+            return self.post(self.u_push+"stats/items_csv", params=params, files={'csv': csv_data})
         #
 
     def push_csv_data(self, csv_data):
@@ -233,20 +245,20 @@ class FlowMetricsStatisticsClient(object):
         self.set_params(params)
         if self.json:
             params['csv'] = csv_data
-            return self.post(json=params)
+            return self.post(self.u_push+"stats/items_csv", json=params)
         else:
             if compressor is not None:
                 csv_data = self.set_compression(params, csv_data)
-            return self.post(params=params, files={'csv': csv_data})
+            return self.post(self.u_push+"stats/items_csv", params=params, files={'csv': csv_data})
         #
 
-    def post(self, **kwargs):
+    def post(self, u, **kwargs):
         if self.requests_args is not None:
             kwargs.update(self.requests_args)
         if self.s is not None:
-            return self.s.post(self.u_push, **kwargs)
+            return self.s.post(u, **kwargs)
         else:
-            return requests.post(self.u_push, **kwargs)
+            return requests.post(u, **kwargs)
         #
 
     def get_definitions(self, typ='', **kwargs):

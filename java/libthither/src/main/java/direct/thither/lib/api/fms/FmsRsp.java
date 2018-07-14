@@ -73,10 +73,10 @@ class FmsRspGetStats  extends FmsRsp {
         msg_code = message_code;
         msg = message;
     }
-    public Map.Entry<String, Integer> next(){
+    public Map.Entry<String, Long> next(){
         JSONArray item = items.getJSONArray(nxt);
         nxt+=1;
-        return Map.entry(item.getString(0), item.getInt(1));
+        return Map.entry(item.getString(0), item.getLong(1));
     }
     public boolean has_next(){
         return nxt < items.length();

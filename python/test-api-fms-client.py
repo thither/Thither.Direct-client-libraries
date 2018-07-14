@@ -13,7 +13,8 @@ import calendar
 # Initiate FmsClient
 client = FmsClient('YourFlowID',
                    pass_phrase='YourPassPhrase',
-                   cipher='AES',
+                   # cipher='AES',
+                   # version='v201807',
                    keep_alive=True)
 
 #
@@ -27,6 +28,7 @@ print ('')
 print ('-'*79)
 print ('Metrics Definitions: ')
 print ('-'*20)
+
 rsp = client.get_definitions('metrics')
 if rsp.status_code != 200:
     print (rsp.status_code, rsp.content)
@@ -36,14 +38,15 @@ for m_id in sorted(metrics.keys()):
     print ('Metric ID: '+m_id)
     for f, v in metrics[m_id].items():
         print ('  ' + f + ': ' + v)
+
 # GET METRICS INFO - END
 
 #
 
 # CONFIGURATION
-clock_screw_adj = 60  # ignore clock screw for test case
-ts_begin = (2017, 1,  1,  0,  0,  0, 0, 0, 0)
-ts_end = (2017,  12, 31, 23, 59, 59, 0, 0, 0)
+clock_screw_adj = 0  # ignore clock screw for test case
+ts_begin = (2017,  1,  1,  0,  0,  0, 0, 0, 0)
+ts_end = (2017,   12, 31, 23, 59, 59, 0, 0, 0)
 from_ts = int(calendar.timegm(ts_begin))+clock_screw_adj
 to_ts = int(calendar.timegm(ts_end))-clock_screw_adj
 
@@ -55,11 +58,60 @@ dt_begin = datetime.datetime.utcfromtimestamp(from_ts)
 dt_end = datetime.datetime.utcfromtimestamp(to_ts)
 num_days = (dt_end-dt_begin).days+1
 
-commit_at = 40000*len(values)*len(metrics)
+commit_at = 20000*len(values)*len(metrics)
 by_utc_ts = True
 
+
+# CHECK TOTAL EXPECTED VALUES OF A METRIC - START
 print ('-'*79)
-print ('Populate stats:')
+print ('GET METRICS EXISTING VALUES:')
+print ('  From UTC:      ' + datetime.datetime.utcfromtimestamp(from_ts).strftime('%Y-%m-%d %H:%M:%S'))
+print ('  To UTC:        ' + datetime.datetime.utcfromtimestamp(to_ts).strftime('%Y-%m-%d %H:%M:%S'))
+print ('  From UTC ts:   '+str(from_ts-clock_screw_adj))
+print ('  To UTC ts:     '+str(to_ts+clock_screw_adj))
+print ('-'*40)
+print ('')
+existing_values = {}
+for m_id in sorted(metrics.keys()):
+    existing_values[m_id] = {'c': 0, 'v': 0}
+    page = 1
+    ts_start = time.time()
+    while True:
+        rsp = client.get_stats(m_id,         # Your Metric ID
+                               from_ts - clock_screw_adj,      # from timestamp
+                               to_ts + clock_screw_adj,        # to timestamp
+                               # base=metrics[m_id],  # time frame base - minutes, groups lower metric base to this base
+                               # tz=timezone,         # adjust timezone UTC +/- minutes
+                               time_format='%Y/%m/%d',  # default '%Y/%m/%d %H:%M' decreased with higher base
+                               # limit=10000,  # results limit, 0:no-limit max:1,000,000
+                               page=page     # start from page number
+                               )
+        if rsp.status_code != 200:
+            print (page, existing_values[m_id]['v'], rsp.status_code, rsp.content)
+            exit()
+
+        js_rsp = rsp.json()
+        for item_date, value in js_rsp['items']:
+            existing_values[m_id]['v'] += value
+            existing_values[m_id]['c'] += 1
+
+        if js_rsp['next_page'] == 0:
+            break
+        page = js_rsp['next_page']
+        #
+
+    print ('METRIC ID ' + m_id + ' VALUES EXIST:')
+    print ('  count:     ' + str(existing_values[m_id]['c']))
+    print ('  value:     ' + str(existing_values[m_id]['v']))
+
+    if metrics[m_id]['operation'] == 'avg' and existing_values[m_id]['c'] != 0:
+        print ('    avg:     ' + str(existing_values[m_id]['v']/existing_values[m_id]['c']))
+
+    print ('  time took: ' + str(time.time()-ts_start))
+
+
+print ('-'*79)
+print ('POPULATE NEW STATS:')
 print ('-'*15)
 print ('  From:            ' + datetime.datetime.fromtimestamp(from_ts).strftime('%Y-%m-%d %H:%M:%S'))
 print ('  To:              ' + datetime.datetime.fromtimestamp(to_ts).strftime('%Y-%m-%d %H:%M:%S'))
@@ -120,27 +172,24 @@ time.sleep(30)  # last commit minimal interval (10)
 #
 
 # CHECK TOTAL EXPECTED VALUES OF A METRIC - START
-from_ts -= clock_screw_adj
-to_ts -= clock_screw_adj
 print ('-'*79)
 print ('CHECK TOTAL EXPECTED VALUES OF A METRIC:')
 print ('  From UTC:      ' + datetime.datetime.utcfromtimestamp(from_ts).strftime('%Y-%m-%d %H:%M:%S'))
 print ('  To UTC:        ' + datetime.datetime.utcfromtimestamp(to_ts).strftime('%Y-%m-%d %H:%M:%S'))
-print ('  From UTC ts:   '+str(from_ts))
-print ('  To UTC ts:     '+str(to_ts))
+print ('  From UTC ts:   '+str(from_ts - clock_screw_adj))
+print ('  To UTC ts:     '+str(to_ts + clock_screw_adj))
 print ('-'*40)
 print ('')
 
 for m_id in sorted(metrics.keys()):
-    operation = metrics[m_id]['operation']
     page = 1
     total_value = 0
     items_count = 0
     ts_start = time.time()
     while True:
         rsp = client.get_stats(m_id,         # Your Metric ID
-                               from_ts,      # from timestamp
-                               to_ts,        # to timestamp
+                               from_ts - clock_screw_adj,      # from timestamp
+                               to_ts + clock_screw_adj,        # to timestamp
                                # base=metrics[m_id],  # time frame base - minutes, groups lower metric base to this base
                                # tz=timezone,         # adjust timezone UTC +/- minutes
                                time_format='%Y/%m/%d',  # default '%Y/%m/%d %H:%M' decreased with higher base
@@ -152,23 +201,29 @@ for m_id in sorted(metrics.keys()):
             exit()
 
         js_rsp = rsp.json()
-        for date, value in js_rsp['items']:
+        for item_date, value in js_rsp['items']:
             total_value += value
             items_count += 1
 
-        if not js_rsp['next_page']:
+        if js_rsp['next_page'] == 0:
             break
         page = js_rsp['next_page']
         #
     time_took = time.time()-ts_start
 
     expected_value = metrics_total[m_id]['v']
-    if operation == 'avg':
+
+    if metrics[m_id]['operation'] == 'avg':
         expected_value /= metrics_total[m_id]['c']
-        total_value = total_value/items_count
+        if metrics_total[m_id]['c'] != 0:
+            total_value = (total_value/items_count)-(total_value-existing_values[m_id]['v'])/metrics_total[m_id]['c']
+        else:
+            total_value /= items_count
+    else:
+        total_value -= existing_values[m_id]['v']
 
     print ('METRIC ID ' + m_id + ' CHECK RESULT: '+('GOOD' if total_value == expected_value else 'BAD'))
-    print ('  operation: ' + operation)
+    print ('  operation: ' + metrics[m_id]['operation'])
     print ('  count:     ' + str(items_count))
     print ('  value:     ' + str(total_value))
     print ('  expected:  ' + str(expected_value))

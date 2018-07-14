@@ -13,8 +13,10 @@ dt_now = datetime.datetime.utcnow()
 # Initiate FmsClient
 client = FmsClient('YourFlowID',
                    pass_phrase='YourPassPhrase',
-                   cipher='AES',
-                   keep_alive=True)
+                   keep_alive=Truem,
+                   # cipher='AES',
+                   # version='v201807',
+                   )
 
 #
 print ('')
@@ -207,7 +209,7 @@ for metric_id in list(metrics.keys()):
             if js_rsp['items']:
                 print (js_rsp['items'][0], js_rsp['items'][-1])
 
-            if not js_rsp['next_page']:
+            if js_rsp['next_page'] == 0:
                 break
             page = js_rsp['next_page']
         else:

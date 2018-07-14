@@ -14,9 +14,10 @@ public class examples {
     public static void main(String[] args) {
 
         // INITIALIZE THE FLOW METRICS STATISTICS CLIENT
-        client = new FmsClient("YourFlowId");
-        client.set_keep_alive(true);
+        client = new FmsClient("YourFlowID");
         client.set_pass_phrase("YourPassPhrase");
+        client.set_keep_alive(true);
+        //client.set_version("v201807");
         //client.set_cipher(FmsClient.Ciphers.AES);
 
         // EXAMPLES, PUSHING SINGLE ITEM
@@ -24,7 +25,11 @@ public class examples {
 
         // client.push_single, FmsSetStatsItem
         for(int n=0; n<10;n++) {
-            r = client.push_single(new FmsSetStatsItem("2", Calendar.getInstance(tz).getTimeInMillis(), 123+n));
+            r = client.push_single(
+                    new FmsSetStatsItem("2",
+                            Calendar.getInstance(tz).getTimeInMillis(),
+                            ((Integer)(123+n)).longValue())
+            );
             System.out.println("code:     "+r.code);
             if(r.code == 200) {
                 System.out.println("succeed:  "+r.succeed);
@@ -38,7 +43,7 @@ public class examples {
         // client.push_single, FmsSetStatsItem with Metric ID preset
         FmsSetStatsItem sm = new FmsSetStatsItem("2");
         for(int n=0; n<10;n++) {
-            sm.set_details(Calendar.getInstance(tz).getTimeInMillis(), 123+n);
+            sm.set_details(Calendar.getInstance(tz).getTimeInMillis(), ((Integer)(123+n)).longValue());
             r = client.push_single(sm);
             System.out.println("code:     "+r.code);
             if(r.code == 200) {
@@ -54,13 +59,11 @@ public class examples {
         // EXAMPLES, PUSHING SEVERAL ITEMS
         // client.push_list in groups of metric id
         List<FmsSetStatsItem> items;
-        FmsSetStatsItem stat_item;
         for(int mid=2; mid<7; mid++) {
             items = new ArrayList<>();
-            stat_item = new FmsSetStatsItem(String.valueOf(mid));
             for(int n=0; n<100000;n++){
-                stat_item.set_details(Calendar.getInstance(tz).getTimeInMillis(), 1+n);
-                items.add(stat_item);
+                items.add(new FmsSetStatsItem(String.valueOf(mid),
+                        Calendar.getInstance(tz).getTimeInMillis(), ((Integer)(1+n)).longValue()));
             }
             r = client.push_list(items);
             System.out.println("code:     "+r.code);
@@ -81,7 +84,8 @@ public class examples {
             csv_data = new StringBuilder("mid,dt,v\n");
             for(int n=0; n<100000;n++){
                 ts = Calendar.getInstance(tz).getTimeInMillis();
-                csv_data.append(new FmsSetStatsItem(String.valueOf(mid), ts, 1+n).to_csv_line());
+                csv_data.append(
+                        new FmsSetStatsItem(String.valueOf(mid), ts, ((Integer)(1+n)).longValue()).to_csv_line());
             }
             r = client.push_csv_data(csv_data.toString());
             System.out.println("code:     "+r.code);
@@ -96,9 +100,9 @@ public class examples {
         }
 
 
-        // client.push_csv_data in groups of metric id
+        // client.get_stats
         FmsRspGetStats stats;
-        Map.Entry<String, Integer> stats_item;
+        Map.Entry<String, Long> stats_item;
         FmsGetStatsQuery query = new FmsGetStatsQuery("2", 1499228800L, 1514764679L);
         query.set_limit(10000);
         do {
@@ -121,6 +125,7 @@ public class examples {
         FmsRspGetDefinitions definitions = client.get_definitions(FmsDefinitionType.ALL, null);
         System.out.println(definitions);
 
+        System.exit(0);
 
     }
 
