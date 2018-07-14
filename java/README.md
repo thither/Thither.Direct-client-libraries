@@ -56,6 +56,7 @@ client.set_pass_phrase("YourPassPhrase");
 option to set the OkHttpClient instance configurations such as proxy or specific timeouts
 ```java
 OkHttpClient http_client = client.get_http_client();
+
 ```
 
 ### PUSHING/POSTING FLOW STATISTICS DATA
@@ -69,6 +70,7 @@ FmsSetStatsItem(String metric_id, String date_time, String value);
 FmsSetStatsItem(String metric_id, String date_time, Long value);
 FmsSetStatsItem(String metric_id, long date_time, String value);
 FmsSetStatsItem(String metric_id, long date_time, Long value);
+
 ```
 for partial initialization:
 ```java
@@ -77,6 +79,7 @@ item.set_details(String date_time, String value);
 item.set_details(String date_time, Long value);
 item.set_details(long date_time, String value);
 item.set_details(long date_time, Long value);
+
 ```
 for item with error initialization:
 ```java
@@ -194,6 +197,7 @@ The FmsRspGetStats object:
    * items:     JSONArray, the items object in it's original http response object
 + The follow methods are available:
    * Map.Entry<String, Long> next(),    get next item map <datetime, value>
+
    * boolean has_next(),                whether there is a next item.
 
 
@@ -296,6 +300,7 @@ Java libthither
  [examples.java](libthither/src/main/java/direct/thither/lib/api/fms/examples.java) 
  and 
  [test.java](libthither/src/main/java/direct/thither/lib/api/fms/test.java)
+
 
 
 
