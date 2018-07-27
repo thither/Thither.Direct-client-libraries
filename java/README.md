@@ -17,8 +17,26 @@ running test and examples:
 
 ###### READY JAR 
     download https://github.com/thither/Thither.Direct-client-libraries/releases/download/v0.10.3/libthither-0.10.3.jar
-    soon at maven
-    
+
+###### MAVEN BUILD WITH REPOSITORY
+Add to pom.xml the repository and a dependency:
+```xml
+    <repositories>
+        <repository>
+            <id>thither.direct</id>
+            <name>Thither.Direct public repository</name>
+            <url>https://thither.direct/static/client_libraries/java/mvn/repo/</url>
+        </repository>
+    </repositories>
+	
+    <dependencies>
+        <dependency>
+            <groupId>direct.thither</groupId>
+            <artifactId>libthither</artifactId>
+            <version>0.10.3</version>
+        </dependency>
+    </dependencies>
+```
 ##### DEPENDENCIES
 ###### required:
      org.json
