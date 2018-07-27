@@ -17,6 +17,10 @@ public class test {
 
         // GET AVAILABLE METRICS
         FmsRspGetDefinitions definitions = client.get_definitions(FmsDefinitionType.METRICS, null);
+        if(definitions.code!=200){
+            System.out.println(definitions);
+            System.exit(1);
+        }
 
         System.out.println("--------------------------------------------------------");
         System.out.println("Metrics Definitions: ");

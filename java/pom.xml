@@ -2,7 +2,7 @@
 
 <project>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>thither.direct</groupId>
+    <groupId>direct.thither</groupId>
     <artifactId>lib</artifactId>
 	
     <version>0.10.3</version>
