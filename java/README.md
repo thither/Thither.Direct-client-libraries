@@ -16,8 +16,27 @@ running test and examples:
   + java -cp ./target/libthither-0.10.3-bundled.jar direct.thither.lib.api.fms.examples
 
 ###### READY JAR 
-    download https://github.com/thither/Thither.Direct-client-libraries/releases/download/libthither-v0.10.3/libthither-0.10.3.jar
-    soon at maven
+    download https://github.com/thither/Thither.Direct-client-libraries/releases/download/v0.10.3/libthither-0.10.3.jar
+
+###### MAVEN BUILD WITH REPOSITORY
+Add to pom.xml the repository and a dependency:
+```xml
+    <repositories>
+        <repository>
+            <id>thither.direct</id>
+            <name>Thither.Direct public repository</name>
+            <url>https://thither.direct/static/client_libraries/java/mvn/repo/</url>
+        </repository>
+    </repositories>
+	
+    <dependencies>
+        <dependency>
+            <groupId>direct.thither</groupId>
+            <artifactId>libthither</artifactId>
+            <version>0.10.3</version>
+        </dependency>
+    </dependencies>
+```
     
 ##### DEPENDENCIES
 ###### required:
