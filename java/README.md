@@ -25,7 +25,7 @@ Add to pom.xml the repository and a dependency:
         <repository>
             <id>thither.direct</id>
             <name>Thither.Direct public repository</name>
-            <url>https://thither.direct/static/client_libraries/java/mvn/repo/</url>
+            <url>https://thither.direct/repositories/client/libraries/java/mvn/repo/</url>
         </repository>
     </repositories>
 	
