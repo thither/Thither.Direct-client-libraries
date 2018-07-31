@@ -10,6 +10,7 @@ import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.zip.*;
 
 import okhttp3.*;
@@ -33,7 +34,7 @@ public class FmsClient {
     private boolean https = true;
     private String u_push, u_get;
     private boolean ka = false;
-
+    private ConcurrentLinkedQueue<FmsSetStatsItem> queue;
     enum Ciphers {None, AES, }
     private Ciphers cipher = Ciphers.None;
     private KeyParameter cipher_key;
@@ -88,23 +89,31 @@ public class FmsClient {
         c.init(true, new ParametersWithIV(cipher_key, nonce));
         //c.init(true, new KeyParameter(cipher_key, c.getBlockSize()*8, nonce,  new byte[0]));
 
-        byte[] d = (Instant.now().getEpochSecond()+"|"+ps).getBytes();
+        byte[] d = ("rndBytes|"+Instant.now().getEpochSecond()+"|"+ps+"|8|rndBytes").getBytes();
         byte[] crp = new byte[c.getOutputSize(d.length)];
         c.doFinal(crp, c.processBytes(d, 0, d.length, crp,0));
 
-        System.out.println("d.length:    "+d.length);
-        System.out.println("d:           "+(new String(d)));
-        System.out.println("OutputSize:  "+c.getOutputSize(d.length));
-        System.out.println("crp.length:  "+crp.length);
-        System.out.println("crp:         "+(new String(crp)));
+        System.out.println("--------------------------------------");
+        System.out.println("INPUTS:");
+        System.out.println("---------");
+        System.out.println("key:          "+(new String(ps)));
+        System.out.println("key len:      "+ps.length());
+        System.out.println("nonce:        "+(new String(nonce)));
+        System.out.println("nonce len:    "+nonce.length);
+        System.out.println("nonce b64:    "+new String(Base64.getEncoder().encode(nonce)));
+        System.out.println("Input:        "+(new String(d)));
+        System.out.println("Input len:    "+d.length);
+        System.out.println("Expected len: "+c.getOutputSize(d.length));
+        System.out.println("--------------------------------------");
+        System.out.println("OUTPUTS:");
+        System.out.println("---------");
+        System.out.println("encrypted:       "+(new String(crp)));
+        System.out.println("encrypted len:   "+crp.length);
+        System.out.println("encrypted b64:   "+(new String(Base64.getEncoder().encode(crp))));
+        System.out.println("MAC:             "+(new String(c.getMac())));
+        System.out.println("MAC len:         "+c.getMac().length);
+        System.out.println("MAC b64:         "+(new String(Base64.getEncoder().encode(c.getMac()))));
 
-        System.out.println("MAC len:     "+c.getMac().length);
-        System.out.println("MAC:         "+(new String(c.getMac())));
-        System.out.println("MAC b64:     "+(new String(Base64.getEncoder().encode(c.getMac()))));
-
-        System.out.println("nonce len:   "+nonce.length);
-        System.out.println("nonce:       "+(new String(nonce)));
-        System.out.println("nonce b64:   "+new String(Base64.getEncoder().encode(nonce)));
 
         c.init(false, new ParametersWithIV(cipher_key, nonce));
         //c.init(false, new AEADParameters(cipher_key, c.getBlockSize()*8, nonce, new byte[0]));
@@ -112,8 +121,12 @@ public class FmsClient {
         int resultLen = c.processBytes(crp, 0, crp.length, datOut, 0);
         c.doFinal(datOut, resultLen);
 
-        System.out.println("datIn:        "+(new String(d)));
-        System.out.println("datOut:       "+(new String(datOut)));
+        System.out.println("--------------------------------------");
+        System.out.println("DECRYPT OUTPUT:");
+        System.out.println("------------------");
+        System.out.println("Output:       "+(new String(datOut)));
+        System.out.println("Output len:   "+datOut.length);
+        System.out.println("--------------------------------------");
 
         return (new String(Base64.getEncoder().encode(nonce)))+"|"+
                 (new String(Base64.getEncoder().encode(c.getMac())))+"|"+
@@ -144,6 +157,18 @@ public class FmsClient {
             return new FmsRspSetStats(1, "bad_request", e.getMessage());
         }
     }
+
+    public ConcurrentLinkedQueue<FmsSetStatsItem> get_queue(){
+        if(queue == null) queue = new ConcurrentLinkedQueue<FmsSetStatsItem>();
+        return queue;
+    }
+    public FmsRspSetStats commit_queue() {
+        if(queue.isEmpty()) return null;
+
+        StringBuilder csv_data = new StringBuilder("mid,dt,v\n");
+        while (!queue.isEmpty()) csv_data.append(queue.poll().to_csv_line());
+        return push_csv_data(csv_data.toString());
+    }
     public FmsRspSetStats push_list(List<FmsSetStatsItem> items) {
         if(items.size()==0)
             return new FmsRspSetStats(0, "bad_request", "EMPTY_LIST");
@@ -171,7 +196,7 @@ public class FmsClient {
                     b.addFormDataPart("ps", ps);
                     break;
             }
-            return post(u_push+"stats/items_csv",b.build());
+            return post(u_push+"stats/items_csv", b.build());
 
         }catch (Exception e){
             return new FmsRspSetStats(1, "bad_request", e.getMessage());
