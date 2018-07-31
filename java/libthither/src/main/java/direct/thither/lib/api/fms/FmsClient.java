@@ -131,7 +131,8 @@ public class FmsClient {
 
         return (new String(Base64.getEncoder().encode(nonce)))+"|"+
                 (new String(Base64.getEncoder().encode(c.getMac())))+"|"+
-                (new String(Base64.getEncoder().encode(crp)));
+                (new String(Base64.getEncoder().encode(Arrays.copyOfRange(crp, 0,crp.length-16))));
+
     }
 
     public FmsRspSetStats push_single(FmsSetStatsItem item){
