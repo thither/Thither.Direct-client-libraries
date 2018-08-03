@@ -4,4 +4,6 @@
 
 /.vs
 /.idea
+/lib
 /java/libthither/target
+/java/libthither/.idea

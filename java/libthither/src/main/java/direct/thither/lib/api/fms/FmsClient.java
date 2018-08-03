@@ -10,11 +10,9 @@ import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.zip.*;
 
 import okhttp3.*;
-
 import org.bouncycastle.crypto.engines.AESEngine;
 import org.bouncycastle.crypto.modes.EAXBlockCipher;
 import org.bouncycastle.crypto.params.KeyParameter;
@@ -34,11 +32,11 @@ public class FmsClient {
     private boolean https = true;
     private String u_push, u_get;
     private boolean ka = false;
-    private ConcurrentLinkedQueue<FmsSetStatsItem> queue;
-    enum Ciphers {None, AES, }
+    public  enum Ciphers {None, AES, }
     private Ciphers cipher = Ciphers.None;
     private KeyParameter cipher_key;
     private int cipher_nonce_len;
+    private FmsSetStatsQueue queue;
 
     public FmsClient(String flow_id) {
         fm_id = flow_id;
@@ -51,35 +49,12 @@ public class FmsClient {
         api_version = version;
         set_https(https);
     }
-    public void set_https(boolean secure){
-        https = secure;
-        String u = "http"+(secure?"s":"")+root_url+api_version+"/";
-        u_push = u+"post/";
-        u_get = u+"get/";
-    }
+
     public void set_cipher(Ciphers c){
         cipher = c;
         if(cipher == Ciphers.None)return;
         cipher_key=new KeyParameter(ps.getBytes());
         cipher_nonce_len = ps.length();
-    }
-    public void set_keep_alive(boolean keep_alive){
-        ka = keep_alive;
-    }
-    private void set_http_client(){
-        if(_http_client != null) return;
-        List<Protocol> protocols = new ArrayList<>();
-        protocols.add(Protocol.HTTP_1_1);
-        if(https)
-            protocols.add(Protocol.HTTP_2);
-        _http_client = new OkHttpClient.Builder().protocols(protocols)
-                .connectTimeout(time_out, TimeUnit.SECONDS)
-                .writeTimeout(time_out, TimeUnit.SECONDS)
-                .readTimeout(time_out, TimeUnit.SECONDS).build();
-    }
-    public OkHttpClient get_http_client(){
-        if(_http_client == null) set_http_client();
-        return _http_client;
     }
     private String get_aes_token() throws Exception {
         EAXBlockCipher c = new EAXBlockCipher(new AESEngine());
@@ -93,6 +68,7 @@ public class FmsClient {
         byte[] crp = new byte[c.getOutputSize(d.length)];
         c.doFinal(crp, c.processBytes(d, 0, d.length, crp, 0));
 
+        /*
         System.out.println("--------------------------------------");
         System.out.println("INPUTS:");
         System.out.println("---------");
@@ -115,8 +91,8 @@ public class FmsClient {
         System.out.println("MAC len:         "+c.getMac().length);
         System.out.println("MAC b64:         "+(new String(Base64.getEncoder().encode(c.getMac()))));
 
-
         //c.init(false, new ParametersWithIV(cipher_key, nonce));
+
         c.init(false, new AEADParameters(cipher_key, c.getBlockSize()*8, nonce, new byte[0]));
         byte[] datOut = new byte[c.getOutputSize(crp.length)];
         int resultLen = c.processBytes(crp, 0, crp.length, datOut, 0);
@@ -128,11 +104,41 @@ public class FmsClient {
         System.out.println("Output:       "+(new String(datOut)));
         System.out.println("Output len:   "+datOut.length);
         System.out.println("--------------------------------------");
-
+        */
         return (new String(Base64.getEncoder().encode(nonce)))+"|"+
                 (new String(Base64.getEncoder().encode(c.getMac())))+"|"+
                 (new String(Base64.getEncoder().encode(Arrays.copyOfRange(crp, 0,crp.length-16))));
 
+    }
+
+    public void set_https(boolean secure){
+        https = secure;
+        String u = "http"+(secure?"s":"")+root_url+api_version+"/";
+        u_push = u+"post/";
+        u_get = u+"get/";
+    }
+    public void set_keep_alive(boolean keep_alive){
+        ka = keep_alive;
+    }
+    private void set_http_client(){
+        if(_http_client != null) return;
+        List<Protocol> protocols = new ArrayList<>();
+        protocols.add(Protocol.HTTP_1_1);
+        if(https)
+            protocols.add(Protocol.HTTP_2);
+        _http_client = new OkHttpClient.Builder().protocols(protocols)
+                .connectTimeout(time_out, TimeUnit.SECONDS)
+                .writeTimeout(time_out, TimeUnit.SECONDS)
+                .readTimeout(time_out, TimeUnit.SECONDS).build();
+    }
+    public OkHttpClient get_http_client(){
+        if(_http_client == null) set_http_client();
+        return _http_client;
+    }
+
+    public FmsSetStatsQueue get_queue(int queue_max){
+        queue = new FmsSetStatsQueue(this, queue_max);
+        return queue;
     }
 
     public FmsRspSetStats push_single(FmsSetStatsItem item){
@@ -158,18 +164,6 @@ public class FmsClient {
         }catch (Exception e){
             return new FmsRspSetStats(1, "bad_request", e.getMessage());
         }
-    }
-
-    public ConcurrentLinkedQueue<FmsSetStatsItem> get_queue(){
-        if(queue == null) queue = new ConcurrentLinkedQueue<FmsSetStatsItem>();
-        return queue;
-    }
-    public FmsRspSetStats commit_queue() {
-        if(queue.isEmpty()) return null;
-
-        StringBuilder csv_data = new StringBuilder("mid,dt,v\n");
-        while (!queue.isEmpty()) csv_data.append(queue.poll().to_csv_line());
-        return push_csv_data(csv_data.toString());
     }
     public FmsRspSetStats push_list(List<FmsSetStatsItem> items) {
         if(items.size()==0)
@@ -391,4 +385,5 @@ public class FmsClient {
             bis.close();
         }
     }
+
 }
