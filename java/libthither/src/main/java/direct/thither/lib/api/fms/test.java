@@ -12,7 +12,7 @@ public class test {
         client.set_pass_phrase("YourPassPhrase");
         client.set_keep_alive(true);
         //client.set_version("v201807");
-        //client.set_cipher(FmsClient.Ciphers.AES);
+        client.set_cipher(FmsClient.Ciphers.AES);
 
 
         // GET AVAILABLE METRICS

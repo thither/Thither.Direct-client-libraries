@@ -62,6 +62,7 @@ public class FmsSetStatsItem extends FmsReq{
     }
 
     public String to_csv_line(){
+        if(mid == null || dt == null || v ==  null) return "";
         return mid+","+dt+","+v+"\n";
     }
     public String toString(){

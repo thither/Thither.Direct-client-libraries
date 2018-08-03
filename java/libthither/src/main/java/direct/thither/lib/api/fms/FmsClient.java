@@ -13,11 +13,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.zip.*;
 
 import okhttp3.*;
-
 import org.bouncycastle.crypto.engines.AESEngine;
 import org.bouncycastle.crypto.modes.EAXBlockCipher;
 import org.bouncycastle.crypto.params.KeyParameter;
-import org.bouncycastle.crypto.params.ParametersWithIV;
+import org.bouncycastle.crypto.params.AEADParameters; //ParametersWithIV;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -33,11 +32,11 @@ public class FmsClient {
     private boolean https = true;
     private String u_push, u_get;
     private boolean ka = false;
-
-    enum Ciphers {None, AES, }
+    public  enum Ciphers {None, AES, }
     private Ciphers cipher = Ciphers.None;
     private KeyParameter cipher_key;
     private int cipher_nonce_len;
+    private FmsSetStatsQueue queue;
 
     public FmsClient(String flow_id) {
         fm_id = flow_id;
@@ -50,17 +49,73 @@ public class FmsClient {
         api_version = version;
         set_https(https);
     }
-    public void set_https(boolean secure){
-        https = secure;
-        String u = "http"+(secure?"s":"")+root_url+api_version+"/";
-        u_push = u+"post/";
-        u_get = u+"get/";
-    }
+
     public void set_cipher(Ciphers c){
         cipher = c;
         if(cipher == Ciphers.None)return;
         cipher_key=new KeyParameter(ps.getBytes());
         cipher_nonce_len = ps.length();
+    }
+    private String get_aes_token() throws Exception {
+        EAXBlockCipher c = new EAXBlockCipher(new AESEngine());
+
+        byte[] nonce = new byte[cipher_nonce_len];
+        new SecureRandom().nextBytes(nonce);
+        // c.init(true, new ParametersWithIV(cipher_key, nonce));
+        c.init(true, new AEADParameters(cipher_key, c.getBlockSize()*8, nonce,  new byte[0]));
+
+        byte[] d = ("rndBytes|"+Instant.now().getEpochSecond()+"|"+fm_id+"|8|rndBytes").getBytes();
+        byte[] crp = new byte[c.getOutputSize(d.length)];
+        c.doFinal(crp, c.processBytes(d, 0, d.length, crp, 0));
+
+        /*
+        System.out.println("--------------------------------------");
+        System.out.println("INPUTS:");
+        System.out.println("---------");
+        System.out.println("BlockSize:    "+c.getBlockSize());
+        System.out.println("key:          "+(new String(ps)));
+        System.out.println("key len:      "+ps.length());
+        System.out.println("nonce:        "+(new String(nonce)));
+        System.out.println("nonce len:    "+nonce.length);
+        System.out.println("nonce b64:    "+new String(Base64.getEncoder().encode(nonce)));
+        System.out.println("Input:        "+(new String(d)));
+        System.out.println("Input len:    "+d.length);
+        System.out.println("Expected len: "+c.getOutputSize(d.length));
+        System.out.println("--------------------------------------");
+        System.out.println("OUTPUTS:");
+        System.out.println("---------");
+        System.out.println("encrypted:       "+(new String(crp)));
+        System.out.println("encrypted len:   "+crp.length);
+        System.out.println("encrypted b64:   "+(new String(Base64.getEncoder().encode(crp))));
+        System.out.println("MAC:             "+(new String(c.getMac())));
+        System.out.println("MAC len:         "+c.getMac().length);
+        System.out.println("MAC b64:         "+(new String(Base64.getEncoder().encode(c.getMac()))));
+
+        //c.init(false, new ParametersWithIV(cipher_key, nonce));
+
+        c.init(false, new AEADParameters(cipher_key, c.getBlockSize()*8, nonce, new byte[0]));
+        byte[] datOut = new byte[c.getOutputSize(crp.length)];
+        int resultLen = c.processBytes(crp, 0, crp.length, datOut, 0);
+        c.doFinal(datOut, resultLen);
+
+        System.out.println("--------------------------------------");
+        System.out.println("DECRYPT OUTPUT:");
+        System.out.println("------------------");
+        System.out.println("Output:       "+(new String(datOut)));
+        System.out.println("Output len:   "+datOut.length);
+        System.out.println("--------------------------------------");
+        */
+        return (new String(Base64.getEncoder().encode(nonce)))+"|"+
+                (new String(Base64.getEncoder().encode(c.getMac())))+"|"+
+                (new String(Base64.getEncoder().encode(Arrays.copyOfRange(crp, 0,crp.length-16))));
+
+    }
+
+    public void set_https(boolean secure){
+        https = secure;
+        String u = "http"+(secure?"s":"")+root_url+api_version+"/";
+        u_push = u+"post/";
+        u_get = u+"get/";
     }
     public void set_keep_alive(boolean keep_alive){
         ka = keep_alive;
@@ -80,44 +135,10 @@ public class FmsClient {
         if(_http_client == null) set_http_client();
         return _http_client;
     }
-    private String get_aes_token() throws Exception {
-        EAXBlockCipher c = new EAXBlockCipher(new AESEngine());
 
-        byte[] nonce = new byte[cipher_nonce_len];
-        new SecureRandom().nextBytes(nonce);
-        c.init(true, new ParametersWithIV(cipher_key, nonce));
-        //c.init(true, new KeyParameter(cipher_key, c.getBlockSize()*8, nonce,  new byte[0]));
-
-        byte[] d = (Instant.now().getEpochSecond()+"|"+ps).getBytes();
-        byte[] crp = new byte[c.getOutputSize(d.length)];
-        c.doFinal(crp, c.processBytes(d, 0, d.length, crp,0));
-
-        System.out.println("d.length:    "+d.length);
-        System.out.println("d:           "+(new String(d)));
-        System.out.println("OutputSize:  "+c.getOutputSize(d.length));
-        System.out.println("crp.length:  "+crp.length);
-        System.out.println("crp:         "+(new String(crp)));
-
-        System.out.println("MAC len:     "+c.getMac().length);
-        System.out.println("MAC:         "+(new String(c.getMac())));
-        System.out.println("MAC b64:     "+(new String(Base64.getEncoder().encode(c.getMac()))));
-
-        System.out.println("nonce len:   "+nonce.length);
-        System.out.println("nonce:       "+(new String(nonce)));
-        System.out.println("nonce b64:   "+new String(Base64.getEncoder().encode(nonce)));
-
-        c.init(false, new ParametersWithIV(cipher_key, nonce));
-        //c.init(false, new AEADParameters(cipher_key, c.getBlockSize()*8, nonce, new byte[0]));
-        byte[] datOut = new byte[c.getOutputSize(crp.length)];
-        int resultLen = c.processBytes(crp, 0, crp.length, datOut, 0);
-        c.doFinal(datOut, resultLen);
-
-        System.out.println("datIn:        "+(new String(d)));
-        System.out.println("datOut:       "+(new String(datOut)));
-
-        return (new String(Base64.getEncoder().encode(nonce)))+"|"+
-                (new String(Base64.getEncoder().encode(c.getMac())))+"|"+
-                (new String(Base64.getEncoder().encode(crp)));
+    public FmsSetStatsQueue get_queue(int queue_max){
+        queue = new FmsSetStatsQueue(this, queue_max);
+        return queue;
     }
 
     public FmsRspSetStats push_single(FmsSetStatsItem item){
@@ -171,7 +192,7 @@ public class FmsClient {
                     b.addFormDataPart("ps", ps);
                     break;
             }
-            return post(u_push+"stats/items_csv",b.build());
+            return post(u_push+"stats/items_csv", b.build());
 
         }catch (Exception e){
             return new FmsRspSetStats(1, "bad_request", e.getMessage());
@@ -364,4 +385,5 @@ public class FmsClient {
             bis.close();
         }
     }
+
 }
