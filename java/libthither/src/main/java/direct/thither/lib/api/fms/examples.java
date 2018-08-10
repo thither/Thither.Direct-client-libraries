@@ -21,8 +21,9 @@ public class examples {
         client.set_cipher(FmsClient.Ciphers.AES);
 
         // client.get_queue thread per metric id
-        System.out.println("client.get_queue, thread per metric id, example start");
-        final FmsSetStatsQueue q = client.get_queue(2000);
+        System.out.println("new FmsSetStatsQueue, thread per metric id, example start");
+
+        final FmsSetStatsQueue q = new FmsSetStatsQueue(client, 2000, 300);
         q.set_callbacks(new FmsSetStatsQueue.FmsSetStatsCallBack() {
             @Override
             public void onRspStats(FmsRspSetStats rsp) {

@@ -81,7 +81,7 @@ public class FmsSetStatsQueue{
                         break;
                     }
                     else if(tries == 5 || r.code == 503 || r.code == 404) break;
-                    else try { Thread.sleep(1000); } catch (Exception e){}
+                    else try { Thread.sleep(2000); } catch (Exception e){}
                 }while(true);
 
                 if(cb != null) {
