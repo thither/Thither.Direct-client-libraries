@@ -152,7 +152,8 @@ FmsRspSetStats r = client.push_csv_data(csv_data);
   + FmsRspSetStats object
 
 ##### PUSHING MULTIPLE ITEMS - using queue
-The queue is implemented with a worker Thread to commit the items on reach of size or time interval.
+The queue is implemented with a worker Thread to commit the items on reach of size or time interval. 
+In case of a commit errors, the reprocess will retry 5 times within 10 secs with the items that had an error(of possible type to re-try ).
 ```java
 final FmsSetStatsQueue q = new FmsSetStatsQueue(client, 2000, 300);
         q.set_callbacks(new FmsSetStatsQueue.FmsSetStatsCallBack() {
