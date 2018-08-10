@@ -52,6 +52,7 @@ Add to pom.xml the repository and a dependency:
     + push_single
     + push_list
     + push_csv_data
+    + use queue
     + get_definitions
     + get_stats
   + (more to come)
@@ -149,6 +150,36 @@ FmsRspSetStats r = client.push_csv_data(csv_data);
   + csv_data: String, a csv format data, header mid,dt,v
 + Returns
   + FmsRspSetStats object
+
+##### PUSHING MULTIPLE ITEMS - using queue
+The queue is implemented with a worker Thread to commit the items on reach of size or time interval.
+```java
+final FmsSetStatsQueue q = new FmsSetStatsQueue(client, 2000, 300);
+        q.set_callbacks(new FmsSetStatsQueue.FmsSetStatsCallBack() {
+            @Override
+            public void onRspStats(FmsRspSetStats rsp) {
+                System.out.println("CB "+rsp);
+                System.out.println("CB queued: "+q.queued());
+            }
+            @Override
+            public void onQueueStop() {
+                System.out.println("CB onQueueStop ");
+                System.out.println("CB queued: "+q.queued());
+            }
+        });
+```
+###### Initializing a FmsSetStatsQueue class
++ Parameters
+  + client: FmsClient, an initialized instance of FmsClient
+  + size: int, wait for this number of items before committing, max 100000
+  + interval: int, if zero commit will be done on size else before reaching size on this interval
++ Returns
+  + FmsSetStatsQueue object
+
+###### Methods of FmsSetStatsQueue class
++ void add(FmsSetStatsItem item) , adding item to a queue
++ int queued() , getting the queued items count 
++ void finalize_and_stop() , finalize the queue and stop the commit Thread
 
 
 ### GETTING FLOW DATA
