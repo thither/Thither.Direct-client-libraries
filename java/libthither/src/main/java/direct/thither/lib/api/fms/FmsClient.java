@@ -36,7 +36,6 @@ public class FmsClient {
     private Ciphers cipher = Ciphers.None;
     private KeyParameter cipher_key;
     private int cipher_nonce_len;
-    private FmsSetStatsQueue queue;
 
     public FmsClient(String flow_id) {
         fm_id = flow_id;
@@ -134,11 +133,6 @@ public class FmsClient {
     public OkHttpClient get_http_client(){
         if(_http_client == null) set_http_client();
         return _http_client;
-    }
-
-    public FmsSetStatsQueue get_queue(int queue_max){
-        queue = new FmsSetStatsQueue(this, queue_max);
-        return queue;
     }
 
     public FmsRspSetStats push_single(FmsSetStatsItem item){
